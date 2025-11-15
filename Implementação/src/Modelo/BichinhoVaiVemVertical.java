@@ -1,9 +1,6 @@
 
 package Modelo;
 
-import Auxiliar.Desenho;
-import java.util.Random;
-
 public class BichinhoVaiVemVertical extends Personagem{
     boolean bUp;
     int contadorDeFrames;

@@ -10,4 +10,5 @@ public class Consts {
     public static final int PERIOD = 150;
     public static final String PATH = File.separator+"imgs"+File.separator;
     public static final int TIMER = 10;
+    public static final boolean DEBUG = true;
 }

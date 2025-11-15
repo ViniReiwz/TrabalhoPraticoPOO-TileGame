@@ -1,7 +1,5 @@
 package Modelo;
 
-import Auxiliar.Desenho;
-
 /**
  *
  * @author Jose F Rodrigues-Jr

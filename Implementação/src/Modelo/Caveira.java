@@ -2,11 +2,8 @@ package Modelo;
 
 import Auxiliar.Consts;
 import Auxiliar.Desenho;
-import Controler.Tela;
-import java.awt.Graphics;
-import java.io.Serializable;
 
-public class Caveira extends Personagem implements Serializable{
+public class Caveira extends Personagem{
     private int iContaIntervalos;
     
     public Caveira(String sNomeImagePNG, int linha, int coluna) {
