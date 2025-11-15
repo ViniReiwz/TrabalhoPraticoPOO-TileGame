@@ -1,2 +1,2 @@
 # Ignora os *.class pra não dar conflito entre branches
-./build/
+build/
