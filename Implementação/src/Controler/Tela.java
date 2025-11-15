@@ -4,6 +4,7 @@ import Modelo.Personagem;
 import Modelo.Caveira;
 import Modelo.Hero;
 import Modelo.Chaser;
+import Modelo.Coletavel;
 import Modelo.BichinhoVaiVemHorizontal;
 import Auxiliar.ArrastaPersListener;
 import Auxiliar.Consts;
@@ -61,7 +62,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         faseAtual = new ArrayList<Personagem>();
 
         /*Cria faseAtual adiciona personagens*/
-        hero = new Hero("Robbo.png", 0, 7);
+        hero = new Hero("joaninha.png", 0, 7);
         this.addPersonagem(hero);
         this.atualizaCamera();
 
@@ -86,6 +87,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         Esfera es = new Esfera("esfera.png", 10, 13);
         this.addPersonagem(es);
 
+        Coletavel Colet = new Coletavel("coracaoo.png", 11, 14);
+        this.addPersonagem(Colet);
     }
 
     public int getCameraLinha() {
@@ -127,7 +130,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 if (mapaLinha < Consts.MUNDO_ALTURA && mapaColuna < Consts.MUNDO_LARGURA) {
                     try {
                         Image newImage = Toolkit.getDefaultToolkit().getImage(
-                                new java.io.File(".").getCanonicalPath() + Consts.PATH + "bricks.png");
+                                new java.io.File(".").getCanonicalPath() + Consts.PATH + "gramaFundo.jpg");
                         g2.drawImage(newImage,
                                 j * Consts.CELL_SIDE, i * Consts.CELL_SIDE,
                                 Consts.CELL_SIDE, Consts.CELL_SIDE, null);
@@ -286,7 +289,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 561, Short.MAX_VALUE)
+            .addGap(0, 600, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
