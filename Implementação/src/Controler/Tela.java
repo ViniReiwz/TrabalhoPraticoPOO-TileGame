@@ -6,16 +6,17 @@ import Modelo.Hero;
 import Modelo.Chaser;
 import Modelo.Coletavel;
 import Modelo.BichinhoVaiVemHorizontal;
+import Auxiliar.ArrastaPersListener;
 import Auxiliar.Consts;
 import Auxiliar.Desenho;
 import Modelo.BichinhoVaiVemVertical;
 import Modelo.Esfera;
 import Modelo.ZigueZague;
 import Auxiliar.Posicao;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.dnd.DropTarget;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -35,7 +36,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import javax.swing.JButton;
 
 public class Tela extends javax.swing.JFrame implements MouseListener, KeyListener {
 
@@ -50,6 +50,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
     public Tela() {
         Desenho.setCenario(this);
         initComponents();
+        new DropTarget(this,new ArrastaPersListener(this));
         this.addMouseListener(this);
         /*mouse*/
         this.addKeyListener(this);
@@ -207,12 +208,15 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 FileOutputStream canoOut = new FileOutputStream(tanque);
                 ObjectOutputStream serializador = new ObjectOutputStream(canoOut);
                 serializador.writeObject(faseAtual);
-            } else if (e.getKeyCode() == KeyEvent.VK_L) {
-                File tanque = new File("POO.dat");
-                FileInputStream canoOut = new FileInputStream(tanque);
-                ObjectInputStream serializador = new ObjectInputStream(canoOut);
-                faseAtual = (ArrayList<Personagem>)serializador.readObject();
-            }
+                serializador.close();
+             } 
+            // else if (e.getKeyCode() == KeyEvent.VK_L) {
+            //     File tanque = new File("POO.dat");
+            //     FileInputStream canoOut = new FileInputStream(tanque);
+            //     ObjectInputStream serializador = new ObjectInputStream(canoOut);         SERÁ IMPLEMENTADA O LOAD AINDA
+            //     faseAtual = (ArrayList<Personagem>)serializador.readObject();
+            //     serializador.close();
+            // }
             else if (e.getKeyCode() == KeyEvent.VK_M)
             {
                 File tanque = new File("POO.zip");
@@ -231,6 +235,18 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 ObjectInputStream serialize = new ObjectInputStream(compact);
                 Personagem p1 = (ZigueZague) serialize.readObject();
                 serialize.close();
+            }
+
+            else if (e.getKeyCode() == KeyEvent.VK_W)
+            {
+                File pers = new File("pers.zip");
+                FileOutputStream fos = new FileOutputStream(pers);
+                GZIPOutputStream gzo = new GZIPOutputStream(fos);
+                ObjectOutputStream oos = new ObjectOutputStream(gzo);
+                Personagem p = this.faseAtual.get(0);
+                oos.writeObject(p);
+                System.out.println("Arquivo salvo em --> " + pers.getAbsolutePath());
+                oos.close();
             }
 
             this.atualizaCamera();
@@ -253,7 +269,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         this.setTitle("X: " + x + ", Y: " + y
                 + " -> Cell: " + (y / Consts.CELL_SIDE) + ", " + (x / Consts.CELL_SIDE));
 
-        this.hero.getPosicao().setPosicao(y / Consts.CELL_SIDE, x / Consts.CELL_SIDE);
+        // Alterações feitas: Normalização da posição para funcionar "longe da área inicial" (Segue as coordenadas da camêra)
+        this.hero.getPosicao().setPosicao((y / Consts.CELL_SIDE) - 1 + this.cameraLinha, (x / Consts.CELL_SIDE) + this.cameraColuna);
 
         repaint();
     }

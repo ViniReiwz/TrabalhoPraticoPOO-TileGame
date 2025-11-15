@@ -1,6 +1,5 @@
 package Modelo;
 
-import Auxiliar.Desenho;
 import java.util.Random;
 
 public class ZigueZague extends Personagem{
