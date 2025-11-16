@@ -1,9 +1,11 @@
 package Controler;
 
 import Modelo.Chaser;
+import Modelo.ParedeRoda;
 import Modelo.Personagem;
 import Modelo.Hero;
 import Auxiliar.Posicao;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class ControleDeJogo {
@@ -13,7 +15,7 @@ public class ControleDeJogo {
             e.get(i).autoDesenho();
     }
     
-    public void processaTudo(ArrayList<Personagem> umaFase) {
+    public void processaTudo(ArrayList<Personagem> umaFase, boolean cima, boolean baixo, boolean esquerda, boolean direita) {
         // Pega o herói (assumindo que ele é sempre o índice 0)
         Hero hero = (Hero) umaFase.get(0);
         Personagem pIesimoPersonagem;
@@ -35,8 +37,27 @@ public class ControleDeJogo {
         for (int i = umaFase.size() - 1; i > 0; i--) { 
             pIesimoPersonagem = umaFase.get(i);
             
+            if (pIesimoPersonagem instanceof ParedeRoda) {
+                if (hero.getPosicao().ParedeVe(pIesimoPersonagem.getPosicao())&&direita){
+                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                hero.moveRight();
+                }
+                else if (hero.getPosicao().ParedeVd(pIesimoPersonagem.getPosicao())&&esquerda){
+                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                hero.moveLeft();
+                }
+                else if (hero.getPosicao().ParedeHc(pIesimoPersonagem.getPosicao())&&baixo){
+                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                hero.moveDown();
+                }
+                else if (hero.getPosicao().ParedeHb(pIesimoPersonagem.getPosicao())&&cima){
+                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                hero.moveUp();
+                }
+            }
+    
             // 1. O Herói está na mesma posição do personagem 'i'?
-            if (hero.getPosicao().igual(pIesimoPersonagem.getPosicao())) {
+            else if (hero.getPosicao().igual(pIesimoPersonagem.getPosicao())) {
                 
                 // 2. O personagem 'i' é transponível?
                 // (Itens não-transponíveis são tratados pelo 'validaPosicao' do Hero)
@@ -57,6 +78,7 @@ public class ControleDeJogo {
                 }
             }
         }
+   
     }
 
     /*Retorna true se a posicao p é válida para Hero com relacao a todos os personagens no array*/
