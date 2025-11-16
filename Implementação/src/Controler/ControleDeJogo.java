@@ -1,6 +1,7 @@
 package Controler;
 
 import Modelo.Chaser;
+import Modelo.Fase;
 import Modelo.Personagem;
 import Modelo.Hero;
 import Auxiliar.Posicao;
@@ -8,9 +9,13 @@ import java.util.ArrayList;
 
 public class ControleDeJogo {
     
-    public void desenhaTudo(ArrayList<Personagem> e) {
-        for (int i = 0; i < e.size(); i++)
-            e.get(i).autoDesenho();
+    public void desenhaTudo(Fase fase) {
+
+        // Spawna todos os personagens da fase (heroi + Inimigos + qualquer coisa)
+        fase.spawnAllPers();
+
+        // Spawna todos os coletáveis da fase (Atualmente enche a tela com imagem de explosao)
+        fase.spawnAllColl();
     }
     
     public void processaTudo(ArrayList<Personagem> umaFase) {
