@@ -44,6 +44,16 @@ public class Fase
         return personagens;
     }
 
+    public ArrayList<Coletavel> getColetaveis() 
+    {
+        return coletaveis;
+    }
+    
+    public int getNum_to_collect() 
+    {
+        return num_to_collect;
+    }
+
     // Spawna todos os personagens
     public void spawnAllPers()
     {
@@ -60,5 +70,10 @@ public class Fase
         {
             c.autoDesenho();
         }
+    }
+
+    public void updatePoints()
+    {
+        this.num_to_collect = this.coletaveis.size();
     }
 }
