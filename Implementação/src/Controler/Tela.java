@@ -45,17 +45,19 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
     private Hero hero;
     private ArrayList<Fase> fases;
-    private Fase faseAtual;
+    public Fase faseAtual;
     private ControleDeJogo cj = new ControleDeJogo();
     private Graphics g2;
     private int cameraLinha = 0;
     private int cameraColuna = 0;
+    public int fase_num = 0;
     private final Set<Integer> teclasPressionadas = new HashSet<>();
     private boolean cima, baixo, esquerda,direita;
     
     public Tela() {
         Desenho.setCenario(this);
         initComponents();
+
         new DropTarget(this,new ArrastaPersListener(this));
         this.addMouseListener(this);
         /*mouse*/
@@ -69,9 +71,12 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         this.setSize(Consts.RES * Consts.CELL_SIDE + getInsets().left + getInsets().right,
                 Consts.RES * Consts.CELL_SIDE + getInsets().top + getInsets().bottom);
 
-        faseAtual = new Fase(new ArrayList<Personagem>());
-
         /*Cria faseAtual adiciona personagens*/
+        ArrayList<Personagem> pers = new ArrayList<>();
+
+        this.faseAtual = new Fase(pers);
+
+        hero = new Hero("joaninha.png", 0, 7);
         // --- Definição das Imagens ---
         String imgPH = "ParedeHorizontal.png"; //
         String imgPV = "ParedeVertical.png";   //
@@ -79,30 +84,33 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         String imgPRV = "ParedeRodaVertical.png"; //
         String imgPRH = "paredeRodaHorizontal.png"; //
 
-        // --- Herói ---
-        hero = new Hero("joaninha.png", 1, 1); // Posição inicial
-        this.addPersonagem(hero);
-        this.atualizaCamera(); //
-
-
         // --- Inimigo ---
         Chaser chase = new Chaser("chaser.png", 12, 12); // Posição inicial do inimigo
         this.addPersonagem(chase);
 
         ZigueZague zz = new ZigueZague("bomba.png", 5, 5);
-        this.addPersonagem(zz);
 
         BichinhoVaiVemHorizontal bBichinhoH = new BichinhoVaiVemHorizontal("roboPink.png", 3, 3);
-        this.addPersonagem(bBichinhoH);
 
         BichinhoVaiVemHorizontal bBichinhoH2 = new BichinhoVaiVemHorizontal("roboPink.png", 6,6);
-        this.addPersonagem(bBichinhoH2);
 
         BichinhoVaiVemVertical bVv = new BichinhoVaiVemVertical("Caveira.png", 10,10);
-        this.addPersonagem(bVv);
 
         Caveira bV = new Caveira("caveira.png", 9, 1);
-        this.addPersonagem(bV);
+
+        Chaser chase = new Chaser("chaser.png", 12, 12);
+
+        Esfera es = new Esfera("esfera.png", 10, 13);
+
+        pers.add(hero);
+        pers.add(zz);
+        pers.add(bBichinhoH);
+        pers.add(bBichinhoH2);
+        pers.add(bVv);
+        pers.add(bV);
+        pers.add(chase);
+        pers.add(es);
+
 
         Chaser chase1 = new Chaser("chaser.png", 20, 8);    // centro do mapa (20, 8)
         this.addPersonagem(chase1);
@@ -161,6 +169,11 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         this.addPersonagem(new Coletavel(imgC, 10, 1));
         this.addPersonagem(new Coletavel(imgC, 12, 5));
         this.addPersonagem(new Coletavel(imgC, 12, 11));
+
+    }
+
+    public ArrayList<Fase> getFases() {
+        return fases;
     }
 
     public int getCameraLinha() {
@@ -172,7 +185,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
     }
 
     public boolean ehPosicaoValida(Posicao p) {
-        return cj.ehPosicaoValida(this.faseAtual.getPersonagens(), p);
+        return cj.ehPosicaoValida(this.faseAtual, p);
     }
 
     public void addPersonagem(Personagem umPersonagem) {
@@ -213,15 +226,14 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             }
         }
         if (!this.faseAtual.getPersonagens().isEmpty()) {
-            this.cj.desenhaTudo(faseAtual.getPersonagens());
-            this.cj.processaTudo(faseAtual.getPersonagens(),cima, baixo, esquerda, direita);
+            this.cj.desenhaTudo(faseAtual);
+            this.cj.processaTudo(faseAtual,cima, baixo, esquerda, direita);
             cima=false;
             baixo=false;
             direita=false;
             esquerda=false;
 
             this.cj.desenhaTudo(faseAtual);
-            this.cj.processaTudo(faseAtual.getPersonagens());
         }
 
         // desnhar a borda cronometro POR CIMA de tudo
