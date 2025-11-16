@@ -1,18 +1,48 @@
 package Controler;
 
 import Modelo.Chaser;
+
 import Modelo.ParedeRoda;
 import Modelo.Personagem;
 import Modelo.Hero;
 import Auxiliar.Posicao;
 import java.awt.event.KeyEvent;
+import Modelo.Fase;
+import Modelo.Personagem;
+import Modelo.Hero;
+import Auxiliar.Posicao;
+import Auxiliar.Consts;
+import Auxiliar.BordaCronometro;
 import java.util.ArrayList;
 
 public class ControleDeJogo {
     
-    public void desenhaTudo(ArrayList<Personagem> e) {
-        for (int i = 0; i < e.size(); i++)
-            e.get(i).autoDesenho();
+    private int contadorSpawn;
+    private int tempoEntreSpawns;
+    private int maxInimigos;
+    private Posicao posicaoSpawnCentral;            // para spawnar no centro do game
+    private BordaCronometro borda;                  // lógica da borda cronometrada
+
+
+    public ControleDeJogo(){
+        this.contadorSpawn = 0;
+        this.tempoEntreSpawns = 150;               // frames (ajustável conforme se desejar)
+        this.maxInimigos = 4;                      // podemos mudar isso também
+        this.posicaoSpawnCentral = new Posicao(Consts.MUNDO_ALTURA / 2, Consts.MUNDO_LARGURA / 2);      // centro
+        this.borda = new BordaCronometro();
+    }
+
+    public BordaCronometro getBorda(){
+        return borda;
+    }
+
+    public void desenhaTudo(Fase fase) {
+
+        // Spawna todos os personagens da fase (heroi + Inimigos + qualquer coisa)
+        fase.spawnAllPers();
+
+        // Spawna todos os coletáveis da fase (Atualmente enche a tela com imagem de explosao)
+        fase.spawnAllColl();
     }
     
     public void processaTudo(ArrayList<Personagem> umaFase, boolean cima, boolean baixo, boolean esquerda, boolean direita) {
@@ -78,7 +108,48 @@ public class ControleDeJogo {
                 }
             }
         }
-   
+
+    // --- NOVO! ---
+    // --- Loop 3: Gerenciamento do spawn dos inimigos ---
+        spawnarInimigos(umaFase);
+
+    }    
+
+
+    // --- NOVO MÉTODO ---
+
+    private void spawnarInimigos(ArrayList<Personagem> umaFase){
+        // contagem de quantos chaser há atualmente
+        int numChasers = 0;
+        for(Personagem p : umaFase){
+            if(p instanceof Chaser){
+                numChasers++;
+            }
+        }
+
+        // se houver menos que o máximo estabelecido, incrementa o contador
+        if(numChasers < maxInimigos){
+            contadorSpawn++;
+
+            double progresso = (double) contadorSpawn / tempoEntreSpawns;
+            borda.atualizarProgresso(progresso);
+
+            // quando dá o tempo, spawna um novo
+            if(contadorSpawn >= tempoEntreSpawns){
+                Chaser novoInimgo = new Chaser("chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
+                umaFase.add(novoInimgo);
+                contadorSpawn = 0;              // reseta o contador
+                borda.resetar();                // reseta a borda
+
+                if(Consts.DEBUG){
+                    System.out.println("Novo inimigo spawnado no centro! Borda resetada.");
+                }
+            }
+        }
+        else{
+            // se já tem o máximo de inimigos, reseta a borda
+            borda.resetar();
+        }
     }
 
     /*Retorna true se a posicao p é válida para Hero com relacao a todos os personagens no array*/

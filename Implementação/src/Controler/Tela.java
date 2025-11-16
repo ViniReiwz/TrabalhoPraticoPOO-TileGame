@@ -84,9 +84,28 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         this.addPersonagem(hero);
         this.atualizaCamera(); //
 
+
         // --- Inimigo ---
         Chaser chase = new Chaser("chaser.png", 12, 12); // Posição inicial do inimigo
         this.addPersonagem(chase);
+
+        ZigueZague zz = new ZigueZague("bomba.png", 5, 5);
+        this.addPersonagem(zz);
+
+        BichinhoVaiVemHorizontal bBichinhoH = new BichinhoVaiVemHorizontal("roboPink.png", 3, 3);
+        this.addPersonagem(bBichinhoH);
+
+        BichinhoVaiVemHorizontal bBichinhoH2 = new BichinhoVaiVemHorizontal("roboPink.png", 6,6);
+        this.addPersonagem(bBichinhoH2);
+
+        BichinhoVaiVemVertical bVv = new BichinhoVaiVemVertical("Caveira.png", 10,10);
+        this.addPersonagem(bVv);
+
+        Caveira bV = new Caveira("caveira.png", 9, 1);
+        this.addPersonagem(bV);
+
+        Chaser chase1 = new Chaser("chaser.png", 20, 8);    // centro do mapa (20, 8)
+        this.addPersonagem(chase1);
 
         // --- Bordas do Labirinto (14x14) ---
         for (int j = 0; j < 14; j++) {
@@ -201,7 +220,12 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             direita=false;
             esquerda=false;
 
+            this.cj.desenhaTudo(faseAtual);
+            this.cj.processaTudo(faseAtual.getPersonagens());
         }
+
+        // desnhar a borda cronometro POR CIMA de tudo
+        this.cj.getBorda().desenhar(g2, this);
 
         g.dispose();
         g2.dispose();

@@ -1,2 +1,5 @@
 # Ignora os *.class pra não dar conflito entre branches
-./build/
+Implementação/build/
+
+# Tira isso aqui do git pra nao dar porblema tambem
+Implementação/private/
