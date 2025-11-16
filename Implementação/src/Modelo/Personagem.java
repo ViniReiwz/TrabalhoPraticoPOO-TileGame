@@ -16,11 +16,13 @@ public abstract class Personagem implements Serializable {
     protected Posicao pPosicao;
     protected boolean bTransponivel; /*Pode passar por cima?*/
     protected boolean bMortal;       /*Se encostar, morre?*/
+    
 
     public boolean isbMortal() {
         return bMortal;
     }
     protected Personagem(String sNomeImagePNG, int linha, int coluna) {
+        
         this.pPosicao = new Posicao(1, 1);
         this.bTransponivel = true;
         this.bMortal = false;
