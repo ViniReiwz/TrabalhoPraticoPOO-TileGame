@@ -83,8 +83,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         Caveira bV = new Caveira("caveira.png", 9, 1);
         this.addPersonagem(bV);
 
-        Chaser chase = new Chaser("chaser.png", 12, 12);
-        this.addPersonagem(chase);
+        Chaser chase1 = new Chaser("chaser.png", 20, 8);    // centro do mapa (20, 8)
+        this.addPersonagem(chase1);
 
         Esfera es = new Esfera("esfera.png", 10, 13);
         this.addPersonagem(es);
@@ -146,6 +146,9 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             this.cj.desenhaTudo(faseAtual);
             this.cj.processaTudo(faseAtual.getPersonagens());
         }
+
+        // desnhar a borda cronometro POR CIMA de tudo
+        this.cj.getBorda().desenhar(g2, this);
 
         g.dispose();
         g2.dispose();
