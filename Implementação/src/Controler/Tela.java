@@ -36,11 +36,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import Modelo.Fase;
 
 public class Tela extends javax.swing.JFrame implements MouseListener, KeyListener {
 
     private Hero hero;
-    private ArrayList<Personagem> faseAtual;
+    private ArrayList<Fase> fases;
+    private Fase faseAtual;
     private ControleDeJogo cj = new ControleDeJogo();
     private Graphics g2;
     private int cameraLinha = 0;
@@ -59,7 +61,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         this.setSize(Consts.RES * Consts.CELL_SIDE + getInsets().left + getInsets().right,
                 Consts.RES * Consts.CELL_SIDE + getInsets().top + getInsets().bottom);
 
-        faseAtual = new ArrayList<Personagem>();
+        faseAtual = new Fase(new ArrayList<Personagem>());
 
         /*Cria faseAtual adiciona personagens*/
         hero = new Hero("joaninha.png", 0, 7);
@@ -100,15 +102,15 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
     }
 
     public boolean ehPosicaoValida(Posicao p) {
-        return cj.ehPosicaoValida(this.faseAtual, p);
+        return cj.ehPosicaoValida(this.faseAtual.getPersonagens(), p);
     }
 
     public void addPersonagem(Personagem umPersonagem) {
-        faseAtual.add(umPersonagem);
+        faseAtual.getPersonagens().add(umPersonagem);
     }
 
     public void removePersonagem(Personagem umPersonagem) {
-        faseAtual.remove(umPersonagem);
+        faseAtual.getPersonagens().remove(umPersonagem);
     }
 
     public Graphics getGraphicsBuffer() {
@@ -140,9 +142,9 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 }
             }
         }
-        if (!this.faseAtual.isEmpty()) {
+        if (!this.faseAtual.getPersonagens().isEmpty()) {
             this.cj.desenhaTudo(faseAtual);
-            this.cj.processaTudo(faseAtual);
+            this.cj.processaTudo(faseAtual.getPersonagens());
         }
 
         g.dispose();
@@ -178,20 +180,20 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             teclasPressionadas.add(e.getKeyCode());
             
             if (e.getKeyCode() == KeyEvent.VK_T) {
-                this.faseAtual.clear();
-                ArrayList<Personagem> novaFase = new ArrayList<Personagem>();
+                this.faseAtual.getPersonagens().clear();
+                Fase novaFase = new Fase(new ArrayList<Personagem>());
 
                 /*Cria faseAtual adiciona personagens*/
                 hero = new Hero("Robbo.png", 10, 10);
                 hero.setPosicao(10, 10);
-                novaFase.add(hero);
+                novaFase.getPersonagens().add(hero);
                 this.atualizaCamera();
 
                 ZigueZague zz = new ZigueZague("bomba.png", 0, 0);
-                novaFase.add(zz);
+                novaFase.getPersonagens().add(zz);
 
                 Esfera es = new Esfera("esfera.png", 4, 4);
-                novaFase.add(es);
+                novaFase.getPersonagens().add(es);
 
                 faseAtual = novaFase;
             } else if (e.getKeyCode() == KeyEvent.VK_UP) {
@@ -243,7 +245,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 FileOutputStream fos = new FileOutputStream(pers);
                 GZIPOutputStream gzo = new GZIPOutputStream(fos);
                 ObjectOutputStream oos = new ObjectOutputStream(gzo);
-                Personagem p = this.faseAtual.get(0);
+                Personagem p = this.faseAtual.getPersonagens().get(0);
                 oos.writeObject(p);
                 System.out.println("Arquivo salvo em --> " + pers.getAbsolutePath());
                 oos.close();
