@@ -2,6 +2,7 @@ package Modelo;
 
 
 import Auxiliar.Desenho;
+import Auxiliar.Posicao;
 import Controler.ControleDeJogo;
 import Controler.Tela;
 import java.awt.Graphics;
@@ -23,6 +24,13 @@ public class Hero extends Personagem{
     private ImageIcon ImagemBaixo;
     private ImageIcon ImagemEsquerda;
     private ImageIcon ImagemDireita;
+
+    private int direcaoAtual = -1; 
+    private int vidas = 3;
+    private Auxiliar.Posicao pPosicaoInicial;
+    private int contadorMovimento;
+    private final int VELOCIDADE_ATRASO = 3; //Controle de movimento do heroi
+
 
     public Hero(String sNomeImagePNG, int linha, int coluna) {
         super(sNomeImagePNG,linha, coluna);
@@ -66,6 +74,40 @@ public class Hero extends Personagem{
         return false;       
     }
 
+    @Override
+    public void autoDesenho() {
+        // Incrementa o contador de frames
+        contadorMovimento++;
+
+        // 1. O contador atingiu o valor de atraso?
+        if (contadorMovimento >= VELOCIDADE_ATRASO) {
+            
+            // 2. Reseta o contador
+            contadorMovimento = 0;
+
+            // 3. Executa a lógica de movimento (seu código antigo)
+            if (direcaoAtual != -1) {
+                Posicao proximaPosicao = new Posicao(this.pPosicao.getLinha(), this.pPosicao.getColuna());
+
+                switch (direcaoAtual) {
+                    case 0: proximaPosicao.moveUp(); break;
+                    case 1: proximaPosicao.moveDown(); break;
+                    case 2: proximaPosicao.moveLeft(); break;
+                    case 3: proximaPosicao.moveRight(); break;
+                }
+
+                if (Desenho.acessoATelaDoJogo().ehPosicaoValida(proximaPosicao)) {
+                    this.pPosicao.setPosicao(proximaPosicao.getLinha(), proximaPosicao.getColuna());
+                } else {
+                    this.direcaoAtual = -1; // Bateu na parede
+                }
+            }
+        }
+
+        // 4. Desenha o herói na tela (isso acontece todo frame)
+        super.autoDesenho();
+    }
+
     /*TO-DO: este metodo pode ser interessante a todos os personagens que se movem*/
     private boolean validaPosicao(){
         if (!Desenho.acessoATelaDoJogo().ehPosicaoValida(this.getPosicao())) {
@@ -76,34 +118,27 @@ public class Hero extends Personagem{
     }
     
     public boolean moveUp() {
-        if(super.moveUp()) {
-            this.iImage = this.ImagemCima; //MUDA A IMAGEM
-            return validaPosicao();
-        }
-        return false;
+        this.direcaoAtual = 0;
+        this.iImage = this.ImagemCima; //
+        return true;
     }
 
     public boolean moveDown() {
-        if(super.moveDown()) {
-            this.iImage = this.ImagemBaixo; //MUDA A IMAGEM
-            return validaPosicao();
-        }
-        return false;
+        this.direcaoAtual = 1;
+        this.iImage = this.ImagemBaixo; //
+        return true;
     }
 
     public boolean moveRight() {
-        if(super.moveRight()) {
-            this.iImage = this.ImagemDireita; //MUDA A IMAGEM
-            return validaPosicao();
-        }
-        return false;
+        this.direcaoAtual = 3;
+        this.iImage = this.ImagemDireita; //
+        return true;
     }
 
     public boolean moveLeft() {
-        if(super.moveLeft()) {
-            this.iImage = this.ImagemEsquerda; //MUDA A IMAGEM
-            return validaPosicao();
-        }
-        return false;
-    }    
+        this.direcaoAtual = 2;
+        this.iImage = this.ImagemEsquerda; //
+        return true;
+    }
+
 }

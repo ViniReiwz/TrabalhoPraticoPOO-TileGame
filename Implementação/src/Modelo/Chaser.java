@@ -46,7 +46,7 @@ public class Chaser extends Personagem {
 
    
     public void autoDesenho() {
-        if (counter == 0) { //Controla a velocidade do inimigo (pode alterar se precisar, quanto maior mais lento)
+        if (counter == 5) { //Controla a velocidade do inimigo (pode alterar se precisar, quanto maior mais lento)
             counter = 0;
 
             Posicao proximaPosicao = new Posicao(this.getPosicao().getLinha(), this.getPosicao().getColuna());
@@ -142,4 +142,6 @@ public class Chaser extends Personagem {
         Posicao p = new Posicao(linha, coluna);
         return Desenho.acessoATelaDoJogo().ehPosicaoValida(p);
     }
+
+    
 }
