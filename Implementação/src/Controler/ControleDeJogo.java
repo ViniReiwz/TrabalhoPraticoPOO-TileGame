@@ -9,6 +9,7 @@ import Auxiliar.Posicao;
 import Modelo.Fase;
 import Auxiliar.Consts;
 import Auxiliar.BordaCronometro;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class ControleDeJogo {
@@ -145,6 +146,7 @@ public class ControleDeJogo {
                 fase.addPers(novoInimgo);
                 contadorSpawn = 0;
                 borda.resetar();
+
 
                 if(Consts.DEBUG){
                     System.out.println("Novo inimigo spawnado no centro! Borda resetada.");

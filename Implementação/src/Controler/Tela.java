@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import Modelo.Fase;
+import Modelo.ParedeRodaMeio;
 
 public class Tela extends javax.swing.JFrame implements MouseListener, KeyListener {
 
@@ -102,7 +103,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         Hero hero = new Hero("joaninha.png", 0, 7);
         
         // --- Inimigo ---
-        Chaser chase = new Chaser("chaser.png", 12, 12); // Posição inicial do inimigo
+
+        Chaser chase = new Chaser("roboPink.png", 12, 12); // Posição inicial do inimigo
 
         ZigueZague zz = new ZigueZague("bomba.png", 5, 5);
 
@@ -165,13 +167,13 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         this.addFase(fase_2);
 
         // --- Bordas do Labirinto (14x14) ---
-        for (int j = 0; j < 14; j++) {
+        for (int j = 1; j < Consts.MUNDO_LARGURA-1; j++) {
             this.addPersonagem(new ParedeH(imgPH, 0, j)); // Borda superior
-            this.addPersonagem(new ParedeH(imgPH, 13, j)); // Borda inferior
+            this.addPersonagem(new ParedeH(imgPH, Consts.MUNDO_ALTURA-1, j)); // Borda inferior
         }
-        for (int i = 1; i < 13; i++) {
+        for (int i = 1; i < Consts.MUNDO_ALTURA-1; i++) {
             this.addPersonagem(new ParedeV(imgPV, i, 0)); // Borda esquerda
-            this.addPersonagem(new ParedeV(imgPV, i, 13)); // Borda direita
+            this.addPersonagem(new ParedeV(imgPV, i, Consts.MUNDO_LARGURA-1)); // Borda direita
         }
 
         // --- Paredes Internas (Estáticas) ---
@@ -244,6 +246,30 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
     public void addPersonagem(Personagem umPersonagem) {
         faseAtual.getPersonagens().add(umPersonagem);
+        ArrayList<Coletavel> removed = new ArrayList<>();
+ 
+            
+        for(int j = faseAtual.getColetaveis().size() - 1; j >= 0; j--)
+        {
+            Coletavel cIesimoColetavel = faseAtual.getColetaveis().get(j);
+            if(umPersonagem.getPosicao().igual(cIesimoColetavel.getPosicao()))
+            {
+                removed.add(cIesimoColetavel);
+            }
+            
+            if(umPersonagem instanceof ParedeRodaMeio){
+                if(umPersonagem.getPosicao().ParedeVd(cIesimoColetavel.getPosicao())||
+                   umPersonagem.getPosicao().ParedeVe(cIesimoColetavel.getPosicao())||
+                   umPersonagem.getPosicao().ParedeHc(cIesimoColetavel.getPosicao())||
+                   umPersonagem.getPosicao().ParedeHb(cIesimoColetavel.getPosicao()))
+                {
+                    removed.add(cIesimoColetavel);
+                }
+            }
+            
+        }
+        faseAtual.getColetaveis().removeAll(removed);
+        faseAtual.updatePoints();
     }
 
     public void removePersonagem(Personagem umPersonagem) {
@@ -269,7 +295,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 if (mapaLinha < Consts.MUNDO_ALTURA && mapaColuna < Consts.MUNDO_LARGURA) {
                     try {
                         Image newImage = Toolkit.getDefaultToolkit().getImage(
-                                new java.io.File(".").getCanonicalPath() + Consts.PATH + "gramaFundo.jpg");
+                                new java.io.File(".").getCanonicalPath() + Consts.PATH + "blackTile.png");
                         g2.drawImage(newImage,
                                 j * Consts.CELL_SIDE, i * Consts.CELL_SIDE,
                                 Consts.CELL_SIDE, Consts.CELL_SIDE, null);
@@ -361,6 +387,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 direita=true;
             } else if (e.getKeyCode() == KeyEvent.VK_S) 
             {
+                System.out.println("Salvando fase");
                 File ultimafase = new File("UltimaFase.dat");
                 ultimafase.createNewFile();
                 FileOutputStream fos = new FileOutputStream(ultimafase);
@@ -369,7 +396,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 serializador.close();
             } 
             else if (e.getKeyCode() == KeyEvent.VK_L) 
-            {
+            {   
+                System.out.println("Carregando fase");
                 File ultimafase = new File("UltimaFase.dat");
                 FileInputStream fis = new FileInputStream(ultimafase);
                 ObjectInputStream serializador = new ObjectInputStream(fis);
@@ -378,9 +406,10 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 int pos = this.fases.indexOf(fase_carregada);
                 this.fase_num = pos;
                 serializador.close();
+                repaint();
             }
             else if (e.getKeyCode() == KeyEvent.VK_M)
-            {
+            {   
                 File tanque = new File("POO.zip");
                 FileOutputStream canOut = new FileOutputStream(tanque);
                 GZIPOutputStream compact = new GZIPOutputStream(canOut);

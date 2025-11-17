@@ -1,11 +1,12 @@
 package Modelo;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 
 // Classe onde tudo relacionado à uma fase deve ser feito
 // A ideia é em Tela.java, chamar o construtor e adicionar os personagens
 // Todo o manuseio interno (deletar personagem, adicionar, mudar estado das paredes, posição das coisas, etc é pra ser feito nessa classe)
-public class Fase 
+public class Fase implements Serializable
 {
     // ArrayList com todos os personagens não-coletaveis
     private ArrayList<Personagem> personagens = new ArrayList<>();
