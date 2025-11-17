@@ -15,7 +15,6 @@ import java.util.ArrayList;
 public class ControleDeJogo {
     
     private int contadorSpawn;
-    private int tempoEntreSpawns;
     private int maxInimigos;
     private Posicao posicaoSpawnCentral;
     private BordaCronometro borda;
@@ -29,7 +28,6 @@ public class ControleDeJogo {
 
     public ControleDeJogo(){
         this.contadorSpawn = 0;
-        this.tempoEntreSpawns = 150;
         this.maxInimigos = 4;
         this.posicaoSpawnCentral = new Posicao(Consts.MUNDO_ALTURA / 2, Consts.MUNDO_LARGURA / 2);
         this.borda = new BordaCronometro();
@@ -171,12 +169,14 @@ public class ControleDeJogo {
             }
         }
 
+        int tempoDaFase = fase.getTempoSpawnBase();
+
         if(numChasers < maxInimigos){
             contadorSpawn++;
-            double progresso = (double) contadorSpawn / tempoEntreSpawns;
+            double progresso = (double) contadorSpawn / tempoDaFase;
             borda.atualizarProgresso(progresso);
 
-            if(contadorSpawn >= tempoEntreSpawns){
+            if(contadorSpawn >= tempoDaFase){
                 Chaser novoInimgo = new Chaser("chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
                 fase.addPers(novoInimgo);
                 contadorSpawn = 0;
@@ -189,6 +189,9 @@ public class ControleDeJogo {
         }
         else{
             borda.resetar();
+            if(contadorSpawn > 0){
+                contadorSpawn = 0;
+            }
         }
     }
 
