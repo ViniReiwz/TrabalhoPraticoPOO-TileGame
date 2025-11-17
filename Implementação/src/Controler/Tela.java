@@ -1,5 +1,6 @@
 package Controler;
 
+import Auxiliar.GameUI;
 import Modelo.Personagem;
 import Modelo.ParedeRoda;
 import Modelo.Caveira;
@@ -51,7 +52,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
     public int fase_num = 0;
     private final Set<Integer> teclasPressionadas = new HashSet<>();
     private boolean cima, baixo, esquerda,direita;
-    
+    private GameUI gameUI = new GameUI();
+
     public Tela() {
 
         Desenho.setCenario(this);
@@ -288,6 +290,9 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
         // desnhar a borda cronometro POR CIMA de tudo
         this.cj.getBorda().desenhar(g2, this);
+        // Desenha a UI (vidas, pontuação, fase)
+        this.gameUI.desenhar(g2, this, this.faseAtual);
+        //Verifica passagem de fase
         this.cj.passaFase(this);
 
         g.dispose();

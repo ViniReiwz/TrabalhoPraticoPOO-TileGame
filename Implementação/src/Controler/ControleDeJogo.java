@@ -16,16 +16,20 @@ public class ControleDeJogo {
     private int contadorSpawn;
     private int tempoEntreSpawns;
     private int maxInimigos;
-    private Posicao posicaoSpawnCentral;            // para spawnar no centro do game
-    private BordaCronometro borda;                  // lógica da borda cronometrada
-
+    private Posicao posicaoSpawnCentral;
+    private BordaCronometro borda;
+    
+    // Variável para controlar invencibilidade temporária após perder vida
+    private int invencibilidadeTimer;
+    private final int TEMPO_INVENCIBILIDADE = 60; // frames de invencibilidade (aprox 3 segundos)
 
     public ControleDeJogo(){
         this.contadorSpawn = 0;
-        this.tempoEntreSpawns = 150;               // frames (ajustável conforme se desejar)
-        this.maxInimigos = 4;                      // podemos mudar isso também
-        this.posicaoSpawnCentral = new Posicao(Consts.MUNDO_ALTURA / 2, Consts.MUNDO_LARGURA / 2);      // centro
+        this.tempoEntreSpawns = 150;
+        this.maxInimigos = 4;
+        this.posicaoSpawnCentral = new Posicao(Consts.MUNDO_ALTURA / 2, Consts.MUNDO_LARGURA / 2);
         this.borda = new BordaCronometro();
+        this.invencibilidadeTimer = 0;
     }
 
     public BordaCronometro getBorda(){
@@ -33,24 +37,23 @@ public class ControleDeJogo {
     }
 
     public void desenhaTudo(Fase fase) {
-
-        // Spawna todos os personagens da fase (heroi + Inimigos + qualquer coisa)
         fase.spawnAllPers();
-
-        // Spawna todos os coletáveis da fase (Atualmente enche a tela com imagem de explosao)
         fase.spawnAllColl();
     }
     
     public void processaTudo(Fase fase, boolean cima, boolean baixo, boolean esquerda, boolean direita) {
-        // Pega o herói (assumindo que ele é sempre o índice 0)
         Hero hero = fase.heroi;
         Personagem pIesimoPersonagem;
         Coletavel cIesimoColetavel;
 
         ArrayList<Coletavel> removed = new ArrayList<>();
         
+        // Decrementa o timer de invencibilidade
+        if (invencibilidadeTimer > 0) {
+            invencibilidadeTimer--;
+        }
+        
         // --- Loop 1: Processar IA dos Inimigos ---
-        // (Esta parte estava correta)
         for (int i = 1; i < fase.getPersonagens().size(); i++) {
             pIesimoPersonagem = fase.getPersonagens().get(i);
                         
@@ -60,49 +63,54 @@ public class ControleDeJogo {
         }
         
         // --- Loop 2: Processar Colisões (Coletáveis e Morte) ---
-        // IMPORTANTE: Iteramos de trás para frente (do fim para o começo).
-        // Isso evita erros (ConcurrentModificationException) ao remover 
-        // um item da lista enquanto ainda estamos percorrendo ela.
         for (int i = fase.getPersonagens().size() - 1; i > 0; i--) { 
             pIesimoPersonagem = fase.getPersonagens().get(i);
             
             if (pIesimoPersonagem instanceof ParedeRoda) {
                 if (hero.getPosicao().ParedeVe(pIesimoPersonagem.getPosicao())&&direita){
-                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
-                hero.moveRight();
+                    ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                    hero.moveRight();
                 }
                 else if (hero.getPosicao().ParedeVd(pIesimoPersonagem.getPosicao())&&esquerda){
-                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
-                hero.moveLeft();
+                    ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                    hero.moveLeft();
                 }
                 else if (hero.getPosicao().ParedeHc(pIesimoPersonagem.getPosicao())&&baixo){
-                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
-                hero.moveDown();
+                    ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                    hero.moveDown();
                 }
                 else if (hero.getPosicao().ParedeHb(pIesimoPersonagem.getPosicao())&&cima){
-                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
-                hero.moveUp();
+                    ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                    hero.moveUp();
                 }
             }
-    
-            // 1. O Herói está na mesma posição do personagem 'i'?
+            // Colisão com personagens mortais (apenas se não estiver invencível)
             else if (hero.getPosicao().igual(pIesimoPersonagem.getPosicao())) {
-                
-                // 2. O personagem 'i' é transponível?
-                // (Itens não-transponíveis são tratados pelo 'validaPosicao' do Hero)
                 if (pIesimoPersonagem.isbTransponivel()) { 
-                    
-                    // 3. O personagem 'i' é mortal? (Inimigo, armadilha)
-                    if (pIesimoPersonagem.isbMortal()) {
-                        System.out.println("GAME OVER!");
-                        // Lógica de morte: remove o herói e para de checar colisões
-                        fase.getPersonagens().remove(hero); 
-                        break; // Sai do loop 'for'
+                    if (pIesimoPersonagem.isbMortal() && invencibilidadeTimer == 0) {
+                        // Perdeu uma vida!
+                        boolean aindaVivo = fase.perderVida();
+                        
+                        if (aindaVivo) {
+                            // Ainda tem vidas, reposiciona o herói e ativa invencibilidade
+                            hero.setPosicao(4, 7); // Posição inicial
+                            invencibilidadeTimer = TEMPO_INVENCIBILIDADE;
+                            System.out.println("ATENÇÃO! Vida perdida! Vidas restantes: " + fase.getVidas());
+                        } else {
+                            // Game Over
+                            System.out.println("╔════════════════════╗");
+                            System.out.println("║    GAME OVER!      ║");
+                            System.out.println("║ Pontuação: " + String.format("%06d", fase.getPontos()) + " ║");
+                            System.out.println("╚════════════════════╝");
+                            fase.getPersonagens().remove(hero);
+                            break;
+                        }
                     } 
                 }
             }
         }
 
+        // --- Loop 3: Processar coleta de itens ---
         for(int j = fase.getColetaveis().size() - 1; j >= 0; j--)
         {
             cIesimoColetavel = fase.getColetaveis().get(j);
@@ -114,17 +122,12 @@ public class ControleDeJogo {
 
         fase.getColetaveis().removeAll(removed);
         fase.updatePoints();
-    // --- NOVO! ---
-    // --- Loop 3: Gerenciamento do spawn dos inimigos ---
+        
+        // --- Loop 4: Gerenciamento do spawn dos inimigos ---
         spawnarInimigos(fase);
-
     }    
 
-
-    // --- NOVO MÉTODO ---
-
     private void spawnarInimigos(Fase fase){
-        // contagem de quantos chaser há atualmente
         int numChasers = 0;
         for(Personagem p : fase.getPersonagens()){
             if(p instanceof Chaser){
@@ -132,19 +135,16 @@ public class ControleDeJogo {
             }
         }
 
-        // se houver menos que o máximo estabelecido, incrementa o contador
         if(numChasers < maxInimigos){
             contadorSpawn++;
-
             double progresso = (double) contadorSpawn / tempoEntreSpawns;
             borda.atualizarProgresso(progresso);
 
-            // quando dá o tempo, spawna um novo
             if(contadorSpawn >= tempoEntreSpawns){
                 Chaser novoInimgo = new Chaser("chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
                 fase.addPers(novoInimgo);
-                contadorSpawn = 0;              // reseta o contador
-                borda.resetar();                // reseta a borda
+                contadorSpawn = 0;
+                borda.resetar();
 
                 if(Consts.DEBUG){
                     System.out.println("Novo inimigo spawnado no centro! Borda resetada.");
@@ -152,12 +152,10 @@ public class ControleDeJogo {
             }
         }
         else{
-            // se já tem o máximo de inimigos, reseta a borda
             borda.resetar();
         }
     }
 
-    /*Retorna true se a posicao p é válida para Hero com relacao a todos os personagens no array*/
     public boolean ehPosicaoValida(Fase fase, Posicao p) {
         Personagem pIesimoPersonagem;
         for (int i = 1; i < fase.getPersonagens().size(); i++) {
@@ -175,22 +173,30 @@ public class ControleDeJogo {
     {
         if (tela.faseAtual.getNum_to_collect() == 0)
         {
-            
             tela.fase_num++;
-            if(tela.fase_num < tela.getFases().size() - 1)
+            if(tela.fase_num < tela.getFases().size())
             {
                 tela.faseAtual = tela.getFases().get(tela.fase_num);
+                // Reseta vidas ao passar de fase (opcional - remova se quiser manter as vidas)
+                // tela.faseAtual.resetarVidas();
                 tela.repaint();
             }
             else
             {
-                System.out.println("Fim de jogo, parabéns !!");
+                System.out.println("╔═══════════════════════════╗");
+                System.out.println("║  PARABÉNS!                ║");
+                System.out.println("║  Você completou o jogo!   ║");
+                System.out.println("║  Pontuação Final: " + String.format("%06d", tela.faseAtual.getPontos()) + "  ║");
+                System.out.println("╚═══════════════════════════╝");
                 System.exit(0);
             }
         }
-        // else
-        // {
-        //     System.out.println("Tem item a coletar ainda --> " + tela.faseAtual.getNum_to_collect());
-        // }
+    }
+    
+    /**
+     * Retorna se o herói está invencível no momento
+     */
+    public boolean estaInvencivel() {
+        return invencibilidadeTimer > 0;
     }
 }

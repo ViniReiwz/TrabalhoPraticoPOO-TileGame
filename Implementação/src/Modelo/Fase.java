@@ -19,7 +19,11 @@ public class Fase
     // Heroi da fase
     public Hero heroi;
 
+    // Sistema de pontuação
     private int pontos = 0;
+    
+    // Sistema de vidas (NOVO!)
+    private int vidas = 3;
 
     public Fase()
     {   
@@ -78,5 +82,72 @@ public class Fase
         this.personagens.add(pers);
     }
 
-
+    // ===== NOVOS MÉTODOS PARA O SISTEMA DE VIDAS =====
+    
+    /**
+     * Retorna o número de vidas restantes
+     */
+    public int getVidas() {
+        return vidas;
+    }
+    
+    /**
+     * Remove uma vida do jogador
+     * @return true se ainda tem vidas, false se game over
+     */
+    public boolean perderVida() {
+        if (vidas > 0) {
+            vidas--;
+            System.out.println("Vida perdida! Vidas restantes: " + vidas);
+            return vidas > 0;
+        }
+        return false;
+    }
+    
+    /**
+     * Adiciona uma vida (para power-ups futuros)
+     */
+    public void ganharVida() {
+        if (vidas < 3) {
+            vidas++;
+            System.out.println("Vida recuperada! Vidas: " + vidas);
+        }
+    }
+    
+    /**
+     * Reseta as vidas para o valor inicial
+     */
+    public void resetarVidas() {
+        vidas = 3;
+    }
+    
+    /**
+     * Verifica se o jogador ainda está vivo
+     */
+    public boolean estaVivo() {
+        return vidas > 0;
+    }
+    
+    // ===== MÉTODOS DE PONTUAÇÃO =====
+    
+    /**
+     * Retorna a pontuação atual
+     */
+    public int getPontos() {
+        return pontos;
+    }
+    
+    /**
+     * Adiciona pontos (para diferentes tipos de itens)
+     */
+    public void adicionarPontos(int valor) {
+        pontos += valor;
+    }
+    
+    /**
+     * Reseta a pontuação
+     */
+    public void resetarPontos() {
+        pontos = 0;
+    }
 }
