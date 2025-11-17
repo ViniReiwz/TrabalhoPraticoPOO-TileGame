@@ -35,8 +35,8 @@ public class BordaCronometro {
         int larguraTela = Consts.RES * Consts.CELL_SIDE;
         int alturaTela = Consts.RES * Consts.CELL_SIDE;
         
-        int tamanhoSegmento = 8;                // pixels de largura de cada quadradinho
-        int espessuraBorda = 4;                 // pixels de altura/largura da borda
+        int tamanhoSegmento = 20;                // pixels de largura de cada quadradinho
+        int espessuraBorda = 10;                 // pixels de altura/largura da borda
         
         // Calcula quantos segmentos cabem em cada lado
         int segmentosPorLado = totalSegmentos / 4;
