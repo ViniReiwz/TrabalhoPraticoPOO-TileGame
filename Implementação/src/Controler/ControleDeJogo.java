@@ -23,7 +23,6 @@ public class ControleDeJogo {
     private int maxInimigos;
     private Posicao posicaoSpawnCentral;            // para spawnar no centro do game
     private BordaCronometro borda;                  // lógica da borda cronometrada
-    ArrayList<Rectangle> objetosDeColisao = new ArrayList<>();
 
 
     public ControleDeJogo(){

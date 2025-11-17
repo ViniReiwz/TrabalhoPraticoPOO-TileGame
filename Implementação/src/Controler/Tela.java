@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import Modelo.Fase;
+import Modelo.ParedeRodaMeio;
 
 public class Tela extends javax.swing.JFrame implements MouseListener, KeyListener {
 
@@ -126,16 +127,16 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         fase_1.addHero(hero);
         pers_1.add(hero);
         pers_1.add(chase);
-        pers_1.add(zz);
-        pers_1.add(bBichinhoH);
-        pers_1.add(bBichinhoH2);
-        pers_1.add(bVv);
-        pers_1.add(bV);
-        pers_1.add(es);
-        pers_1.add(chase1);
+        //pers_1.add(zz);
+        //pers_1.add(bBichinhoH);
+        //pers_1.add(bBichinhoH2);
+        //pers_1.add(bVv);
+        //pers_1.add(bV);
+        //pers_1.add(es);
+        //pers_1.add(chase1);
 
         // --- Bordas do Labirinto (14x14) ---
-        for (int j = 0; j < 14; j++) {
+        for (int j = 1; j < 13; j++) {
             this.addPersonagem(new ParedeH(imgPH, 0, j)); // Borda superior
             this.addPersonagem(new ParedeH(imgPH, 13, j)); // Borda inferior
         }
@@ -214,6 +215,30 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
     public void addPersonagem(Personagem umPersonagem) {
         faseAtual.getPersonagens().add(umPersonagem);
+        ArrayList<Coletavel> removed = new ArrayList<>();
+ 
+            
+        for(int j = faseAtual.getColetaveis().size() - 1; j >= 0; j--)
+        {
+            Coletavel cIesimoColetavel = faseAtual.getColetaveis().get(j);
+            if(umPersonagem.getPosicao().igual(cIesimoColetavel.getPosicao()))
+            {
+                removed.add(cIesimoColetavel);
+            }
+            
+            if(umPersonagem instanceof ParedeRodaMeio){
+                if(umPersonagem.getPosicao().ParedeVd(cIesimoColetavel.getPosicao())||
+                   umPersonagem.getPosicao().ParedeVe(cIesimoColetavel.getPosicao())||
+                   umPersonagem.getPosicao().ParedeHc(cIesimoColetavel.getPosicao())||
+                   umPersonagem.getPosicao().ParedeHb(cIesimoColetavel.getPosicao()))
+                {
+                    removed.add(cIesimoColetavel);
+                }
+            }
+            
+        }
+        faseAtual.getColetaveis().removeAll(removed);
+        faseAtual.updatePoints();
     }
 
     public void removePersonagem(Personagem umPersonagem) {
