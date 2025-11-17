@@ -20,7 +20,7 @@ public class GameUI {
     // Animação de pontuação
     private int pontosExibidos;
     private int pontosAlvo;
-    private static final int VELOCIDADE_ANIMACAO = 0.6;
+    private static final double VELOCIDADE_ANIMACAO = 0.6;
     
     // Flash vermelho ao ser atingido
     private int flashTimer;
@@ -200,7 +200,7 @@ public class GameUI {
     private void desenharVidas(Graphics g, Fase fase) {
         int x = 10;
         int y = 45;
-        int vidasRestantes = fase.getVidas();
+        int vidasRestantes = fase.heroi.getVida();
         
         // Label "VIDAS"
         g.setFont(new Font("Courier New", Font.BOLD, 14));
