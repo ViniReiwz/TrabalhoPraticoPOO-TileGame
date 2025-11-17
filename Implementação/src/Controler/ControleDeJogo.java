@@ -9,6 +9,7 @@ import Auxiliar.Posicao;
 import Modelo.Fase;
 import Auxiliar.Consts;
 import Auxiliar.BordaCronometro;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class ControleDeJogo {
