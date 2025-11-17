@@ -6,11 +6,7 @@ import Modelo.ParedeRoda;
 import Modelo.Personagem;
 import Modelo.Hero;
 import Auxiliar.Posicao;
-import java.awt.event.KeyEvent;
 import Modelo.Fase;
-import Modelo.Personagem;
-import Modelo.Hero;
-import Auxiliar.Posicao;
 import Auxiliar.Consts;
 import Auxiliar.BordaCronometro;
 import java.awt.Rectangle;
@@ -121,17 +117,17 @@ public class ControleDeJogo {
         fase.updatePoints();
     // --- NOVO! ---
     // --- Loop 3: Gerenciamento do spawn dos inimigos ---
-        spawnarInimigos(fase.getPersonagens());
+        spawnarInimigos(fase);
 
     }    
 
 
     // --- NOVO MÉTODO ---
 
-    private void spawnarInimigos(ArrayList<Personagem> umaFase){
+    private void spawnarInimigos(Fase fase){
         // contagem de quantos chaser há atualmente
         int numChasers = 0;
-        for(Personagem p : umaFase){
+        for(Personagem p : fase.getPersonagens()){
             if(p instanceof Chaser){
                 numChasers++;
             }
@@ -146,10 +142,11 @@ public class ControleDeJogo {
 
             // quando dá o tempo, spawna um novo
             if(contadorSpawn >= tempoEntreSpawns){
-                Chaser novoInimgo = new Chaser("roboPink.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
-                umaFase.add(novoInimgo);
+                Chaser novoInimgo = new Chaser("chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
+                fase.addPers(novoInimgo);
                 contadorSpawn = 0;              // reseta o contador
                 borda.resetar();                // reseta a borda
+
 
                 if(Consts.DEBUG){
                     System.out.println("Novo inimigo spawnado no centro! Borda resetada.");
@@ -180,14 +177,22 @@ public class ControleDeJogo {
     {
         if (tela.faseAtual.getNum_to_collect() == 0)
         {
+            
             tela.fase_num++;
-            tela.getFases().remove(tela.faseAtual);
-            tela.faseAtual=tela.getFases().get(tela.fase_num);
-            tela.repaint();
+            if(tela.fase_num < tela.getFases().size() - 1)
+            {
+                tela.faseAtual = tela.getFases().get(tela.fase_num);
+                tela.repaint();
+            }
+            else
+            {
+                System.out.println("Fim de jogo, parabéns !!");
+                System.exit(0);
+            }
         }
-        else
-        {
-            System.out.println("Tem item a coletar ainda --> " + tela.faseAtual.getNum_to_collect());
-        }
+        // else
+        // {
+        //     System.out.println("Tem item a coletar ainda --> " + tela.faseAtual.getNum_to_collect());
+        // }
     }
 }
