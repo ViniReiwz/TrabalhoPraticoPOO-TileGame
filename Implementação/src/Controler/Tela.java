@@ -5,7 +5,6 @@ import Modelo.ParedeRoda;
 import Modelo.Caveira;
 import Modelo.Hero;
 import Modelo.Chaser;
-import Modelo.Coletavel;
 import Modelo.BichinhoVaiVemHorizontal;
 import Auxiliar.ArrastaPersListener;
 import Auxiliar.Consts;
@@ -43,7 +42,7 @@ import Modelo.Fase;
 
 public class Tela extends javax.swing.JFrame implements MouseListener, KeyListener {
 
-    private ArrayList<Fase> fases;
+    private ArrayList<Fase> fases = new ArrayList<>();
     public Fase faseAtual;
     private ControleDeJogo cj = new ControleDeJogo();
     private Graphics g2;
@@ -85,19 +84,17 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
         //Criando uma fase -->
         /*  PS: Esse é somente um padrão pra organizar melhor o desenvolvimento
-         *  Crie um Array_List pers_x => x == num da fase
-         *  Cria a Fase fase_x(pers_x) ==> Mesmo se ee nao tiver elemento nenhum
+         *  Crie aFase fase_x()
          *  Crie o heroi,  e chame o método fase_x.addHero(Hero heroi) (Adiciona o heroi criado)
-         *  Adicione os personagens com o método pers_x.add(Personagem p)
+         *  Adicione os personagens com o método fase_x.addPers(Personagem p) [ Pode incluir o herói ou não ]
          *  Como os coletaveis e paredes são "iguais" para toda a fase (Paredes e Coletaveis sempre no mesmo formato e local)
          *      sua criação será feita posteriormente na classe Fase, aqui em tela criamos somente os objetos dos personagens
          */
 
-        ArrayList<Personagem> pers_1 = new ArrayList<>();
-
-        Fase fase_1 = new Fase(pers_1);
+        Fase fase_1 = new Fase();
 
         this.faseAtual = fase_1;
+        this.addFase(fase_1);
 
         // Heroi
         Hero hero = new Hero("joaninha.png", 0, 7);
@@ -118,20 +115,52 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
         Esfera es = new Esfera("esfera.png", 10, 13);
 
-
         Chaser chase1 = new Chaser("chaser.png", 20, 8);    // centro do mapa (20, 8)
         
 
         fase_1.addHero(hero);
-        pers_1.add(hero);
-        pers_1.add(chase);
-        pers_1.add(zz);
-        pers_1.add(bBichinhoH);
-        pers_1.add(bBichinhoH2);
-        pers_1.add(bVv);
-        pers_1.add(bV);
-        pers_1.add(es);
-        pers_1.add(chase1);
+        fase_1.addPers(hero);
+        fase_1.addPers(chase);
+        fase_1.addPers(zz);
+        fase_1.addPers(bBichinhoH);
+        fase_1.addPers(bBichinhoH2);
+        fase_1.addPers(bVv);
+        fase_1.addPers(bV);
+        fase_1.addPers(es);
+        fase_1.addPers(chase1);
+
+        // Criando fase 2 pra testar passar de fase ==>
+        Fase fase_2 = new Fase();
+        this.addFase(fase_2);
+
+        // --- Inimigo Fase 2---
+
+        Hero hero2 = new Hero("joaninha.png", 0, 7);
+
+        ZigueZague zz2 = new ZigueZague("bomba.png", 5, 5);
+
+        BichinhoVaiVemHorizontal bBichinhoH222 = new BichinhoVaiVemHorizontal("roboPink.png", 3, 3);
+
+        BichinhoVaiVemVertical bVv2 = new BichinhoVaiVemVertical("Caveira.png", 10,10);
+
+        Caveira bV2 = new Caveira("caveira.png", 9, 1);
+
+
+        Esfera es2 = new Esfera("esfera.png", 10, 13);
+
+
+        Chaser chase2 = new Chaser("chaser.png", 20, 8);    // centro do mapa (20, 8)
+
+        fase_2.addHero(hero2);
+        fase_2.addPers(hero2);
+        fase_2.addPers(zz2);
+        fase_2.addPers(bBichinhoH222);
+        fase_2.addPers(bVv2);
+        fase_2.addPers(bV2);
+        fase_2.addPers(es2);
+        fase_2.addPers(chase2);
+
+        this.addFase(fase_2);
 
         // --- Bordas do Labirinto (14x14) ---
         for (int j = 0; j < 14; j++) {
@@ -255,19 +284,18 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             baixo=false;
             direita=false;
             esquerda=false;
-
-            this.cj.desenhaTudo(faseAtual);
-            this.cj.passaFase(this);
         }
 
         // desnhar a borda cronometro POR CIMA de tudo
         this.cj.getBorda().desenhar(g2, this);
+        this.cj.passaFase(this);
 
         g.dispose();
         g2.dispose();
         if (!getBufferStrategy().contentsLost()) {
             getBufferStrategy().show();
         }
+
     }
 
     private void atualizaCamera() {
@@ -326,21 +354,26 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                 this.faseAtual.heroi.moveRight();
                 direita=true;
-            } else if (e.getKeyCode() == KeyEvent.VK_S) {
-                File tanque = new File("POO.dat");
-                tanque.createNewFile();
-                FileOutputStream canoOut = new FileOutputStream(tanque);
-                ObjectOutputStream serializador = new ObjectOutputStream(canoOut);
-                serializador.writeObject(faseAtual);
+            } else if (e.getKeyCode() == KeyEvent.VK_S) 
+            {
+                File ultimafase = new File("UltimaFase.dat");
+                ultimafase.createNewFile();
+                FileOutputStream fos = new FileOutputStream(ultimafase);
+                ObjectOutputStream serializador = new ObjectOutputStream(fos);
+                serializador.writeObject(this.faseAtual);
                 serializador.close();
-             } 
-            // else if (e.getKeyCode() == KeyEvent.VK_L) {
-            //     File tanque = new File("POO.dat");
-            //     FileInputStream canoOut = new FileInputStream(tanque);
-            //     ObjectInputStream serializador = new ObjectInputStream(canoOut);         SERÁ IMPLEMENTADA O LOAD AINDA
-            //     faseAtual = (ArrayList<Personagem>)serializador.readObject();
-            //     serializador.close();
-            // }
+            } 
+            else if (e.getKeyCode() == KeyEvent.VK_L) 
+            {
+                File ultimafase = new File("UltimaFase.dat");
+                FileInputStream fis = new FileInputStream(ultimafase);
+                ObjectInputStream serializador = new ObjectInputStream(fis);
+                Fase fase_carregada = (Fase)serializador.readObject();
+                this.faseAtual = fase_carregada;
+                int pos = this.fases.indexOf(fase_carregada);
+                this.fase_num = pos;
+                serializador.close();
+            }
             else if (e.getKeyCode() == KeyEvent.VK_M)
             {
                 File tanque = new File("POO.zip");

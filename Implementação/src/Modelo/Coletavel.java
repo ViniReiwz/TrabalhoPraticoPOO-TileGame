@@ -8,9 +8,4 @@ public class Coletavel extends Personagem {
         this.bTransponivel = true;
         this.bMortal = false;
     }
-
-    @Override
-    public void autoDesenho(){
-        super.autoDesenho();
-    }
 }
