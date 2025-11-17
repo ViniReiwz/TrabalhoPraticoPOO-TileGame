@@ -20,11 +20,11 @@ public class GameUI {
     // Animação de pontuação
     private int pontosExibidos;
     private int pontosAlvo;
-    private static final int VELOCIDADE_ANIMACAO = 1;
+    private static final int VELOCIDADE_ANIMACAO = 0.6;
     
     // Flash vermelho ao ser atingido
     private int flashTimer;
-    private static final int DURACAO_FLASH = 30; // frames
+    private static final int DURACAO_FLASH = 10; // frames
     
     // Barra de progresso
     private int progressoBarraAnimado;
@@ -103,7 +103,7 @@ public class GameUI {
      */
     private void desenharFlashVermelho(Graphics g, int larguraTela, int alturaTela) {
         // Efeito pulsante: intensidade varia com o tempo
-        int intensidade = (int)(100 * ((double)flashTimer / DURACAO_FLASH));
+        int intensidade = (int)(70 * ((double)flashTimer / DURACAO_FLASH));
         Color flashColor = new Color(255, 0, 0, intensidade);
         
         g.setColor(flashColor);
