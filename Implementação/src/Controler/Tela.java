@@ -69,6 +69,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         
         // Adiciona um listener para os eventos do teclado neste objeto
         this.addKeyListener(this);
+
+        this.cj.setGameUI(this.gameUI);
         
         // Não sei oq é isso
         cima=false;
@@ -275,7 +277,10 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             
         }
         faseAtual.getColetaveis().removeAll(removed);
-        faseAtual.updatePoints();
+        for(Coletavel c : removed)
+        {
+            faseAtual.updatePoints(c);
+        }
     }
 
     public void removePersonagem(Personagem umPersonagem) {

@@ -8,6 +8,5 @@ public class Caveira extends Coletavel{
         this.bTransponivel = true;
         this.bMortal = false;
         this.val = 0;
-        this.mult =  0;
     }
 }
