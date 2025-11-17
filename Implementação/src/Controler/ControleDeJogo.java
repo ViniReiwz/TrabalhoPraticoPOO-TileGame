@@ -154,7 +154,10 @@ public class ControleDeJogo {
         }
 
         fase.getColetaveis().removeAll(removed);
-        fase.updatePoints();
+        for(Coletavel c : removed)
+        {
+            fase.updatePoints(c);
+        }
         
         // --- Loop 4: Gerenciamento do spawn dos inimigos ---
         spawnarInimigos(fase);

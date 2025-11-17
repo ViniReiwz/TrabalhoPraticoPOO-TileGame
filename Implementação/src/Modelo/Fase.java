@@ -1,6 +1,10 @@
 package Modelo;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
+import Auxiliar.Consts;
+
 import java.io.Serializable;
 
 // Classe onde tudo relacionado à uma fase deve ser feito
@@ -20,6 +24,8 @@ public class Fase implements Serializable
     // Heroi da fase
     public Hero heroi;
 
+    private int multiplier = 1;
+
     // Sistema de pontuação
     private int pontos = 0;
     
@@ -28,8 +34,16 @@ public class Fase implements Serializable
 
     public Fase()
     {   
-        Coletavel c = new Coletavel("explosao.png", 5, 6);
-        this.coletaveis.add(c);
+
+        for(int i = 0; i < Consts.MUNDO_ALTURA; i++)
+        {
+            for(int j = 0; j < Consts.MUNDO_LARGURA; j++)
+            {
+                Coletavel c = new Coletavel("explosao.png", i, j);
+                this.coletaveis.add(c);
+            }
+        }
+        this.addSpecial();
     }
 
     // Retorna o array list com os personagens
@@ -66,11 +80,14 @@ public class Fase implements Serializable
         }
     }
 
-    public void updatePoints()
+    public void updatePoints(Coletavel c)
     {
         int before = this.num_to_collect;
         this.num_to_collect = this.coletaveis.size();
-        if(before != this.num_to_collect){this.pontos++;}
+        if(before != this.num_to_collect)
+        {
+            this.pontos += (c.val * this.multiplier);
+        }
     }
 
     public void addHero(Hero hero)
@@ -151,5 +168,17 @@ public class Fase implements Serializable
      */
     public void resetarPontos() {
         pontos = 0;
+    }
+
+    public void addSpecial()
+    {
+        for(int i = 0; i < 4; i ++)
+        {
+            int special_pos = ThreadLocalRandom.current().nextInt(0,this.coletaveis.size());
+            Coletavel c = this.coletaveis.get(special_pos);
+            ColetavelEspecial cesp = new ColetavelEspecial("bricks.png", c.getPosicao().getLinha(), c.getPosicao().getColuna());
+            this.coletaveis.remove(c);
+            this.coletaveis.add(cesp);
+        }
     }
 }
