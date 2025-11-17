@@ -1,5 +1,6 @@
 package Controler;
 
+import Modelo.Coletavel;
 import Auxiliar.GameUI;
 import Modelo.Personagem;
 import Modelo.ParedeRoda;
