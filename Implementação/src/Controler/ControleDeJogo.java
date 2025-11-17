@@ -146,7 +146,7 @@ public class ControleDeJogo {
 
             // quando dá o tempo, spawna um novo
             if(contadorSpawn >= tempoEntreSpawns){
-                Chaser novoInimgo = new Chaser("chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
+                Chaser novoInimgo = new Chaser("roboPink.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
                 umaFase.add(novoInimgo);
                 contadorSpawn = 0;              // reseta o contador
                 borda.resetar();                // reseta a borda

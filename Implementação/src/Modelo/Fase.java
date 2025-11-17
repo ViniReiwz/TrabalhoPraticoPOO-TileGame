@@ -27,9 +27,9 @@ public class Fase
 
         this.coletaveis = new ArrayList<Coletavel>();
         
-        for(int i = 0; i < Consts.MUNDO_ALTURA; i++)
+        for(int i = 1; i < Consts.MUNDO_ALTURA-1; i++)
         {
-            for(int j = 0; j < Consts.MUNDO_LARGURA; j++)
+            for(int j = 1; j < Consts.MUNDO_LARGURA-1; j++)
             {
                 Coletavel c = new Coletavel("explosao.png", i, j);
                 this.coletaveis.add(c);
