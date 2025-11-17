@@ -47,7 +47,7 @@ public class ControleDeJogo {
     
     public void processaTudo(Fase fase, boolean cima, boolean baixo, boolean esquerda, boolean direita) {
         // Pega o herói (assumindo que ele é sempre o índice 0)
-        Hero hero = (Hero) fase.getPersonagens().get(0);
+        Hero hero = fase.heroi;
         Personagem pIesimoPersonagem;
         Coletavel cIesimoColetavel;
 
