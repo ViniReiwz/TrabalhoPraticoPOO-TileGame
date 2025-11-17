@@ -16,7 +16,7 @@ public class Fase
     private ArrayList<Coletavel> coletaveis;
 
     // Número de coletaveis (ao chegar em 0 a fase deve acabar - Não implementado ainda)
-    private int num_to_collect;
+    private int num_to_collect = -1;
 
     // Heroi da fase
     public Hero heroi;
@@ -24,7 +24,6 @@ public class Fase
     public Fase(ArrayList<Personagem> personagens)
     {
         this.personagens = personagens;
-        // this.heroi = (Hero)this.personagens.get(0);
 
         this.coletaveis = new ArrayList<Coletavel>();
         
@@ -44,6 +43,16 @@ public class Fase
         return personagens;
     }
 
+    public ArrayList<Coletavel> getColetaveis() 
+    {
+        return coletaveis;
+    }
+    
+    public int getNum_to_collect() 
+    {
+        return num_to_collect;
+    }
+
     // Spawna todos os personagens
     public void spawnAllPers()
     {
@@ -61,4 +70,21 @@ public class Fase
             c.autoDesenho();
         }
     }
+
+    public void updatePoints()
+    {
+        this.num_to_collect = this.coletaveis.size();
+    }
+
+    public void addHero(Hero hero)
+    {
+        this.heroi = hero;
+    }
+
+    public void addPers(Personagem pers)
+    {
+        this.personagens.add(pers);
+    }
+
+
 }

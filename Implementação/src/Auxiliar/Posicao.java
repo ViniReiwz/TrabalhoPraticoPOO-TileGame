@@ -42,6 +42,22 @@ public class Posicao implements Serializable {
     public boolean igual(Posicao posicao) {
         return (linha == posicao.getLinha() && coluna == posicao.getColuna());
     }
+    
+    public boolean ParedeVe(Posicao posicao) {
+        return (linha == posicao.getLinha() && coluna == posicao.getColuna()-1);
+    }
+
+    public boolean ParedeVd(Posicao posicao) {
+        return (linha == posicao.getLinha() && coluna == posicao.getColuna()+1);
+    }
+    
+    public boolean ParedeHc(Posicao posicao) {
+        return (linha == posicao.getLinha()-1 && coluna == posicao.getColuna());
+    }
+    
+    public boolean ParedeHb(Posicao posicao) {
+        return (linha == posicao.getLinha()+1 && coluna == posicao.getColuna());
+    }
 
     public boolean copia(Posicao posicao) {
         return this.setPosicao(posicao.getLinha(), posicao.getColuna());

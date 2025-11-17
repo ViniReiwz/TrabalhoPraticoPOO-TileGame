@@ -1,6 +1,12 @@
 package Controler;
 
 import Modelo.Chaser;
+import Modelo.Coletavel;
+import Modelo.ParedeRoda;
+import Modelo.Personagem;
+import Modelo.Hero;
+import Auxiliar.Posicao;
+import java.awt.event.KeyEvent;
 import Modelo.Fase;
 import Modelo.Personagem;
 import Modelo.Hero;
@@ -39,15 +45,18 @@ public class ControleDeJogo {
         fase.spawnAllColl();
     }
     
-    public void processaTudo(ArrayList<Personagem> umaFase) {
+    public void processaTudo(Fase fase, boolean cima, boolean baixo, boolean esquerda, boolean direita) {
         // Pega o herói (assumindo que ele é sempre o índice 0)
-        Hero hero = (Hero) umaFase.get(0);
+        Hero hero = fase.heroi;
         Personagem pIesimoPersonagem;
+        Coletavel cIesimoColetavel;
+
+        ArrayList<Coletavel> removed = new ArrayList<>();
         
         // --- Loop 1: Processar IA dos Inimigos ---
         // (Esta parte estava correta)
-        for (int i = 1; i < umaFase.size(); i++) {
-            pIesimoPersonagem = umaFase.get(i);
+        for (int i = 1; i < fase.getPersonagens().size(); i++) {
+            pIesimoPersonagem = fase.getPersonagens().get(i);
                         
             if (pIesimoPersonagem instanceof Chaser) {
                 ((Chaser) pIesimoPersonagem).computeDirection(hero.getPosicao());
@@ -58,11 +67,30 @@ public class ControleDeJogo {
         // IMPORTANTE: Iteramos de trás para frente (do fim para o começo).
         // Isso evita erros (ConcurrentModificationException) ao remover 
         // um item da lista enquanto ainda estamos percorrendo ela.
-        for (int i = umaFase.size() - 1; i > 0; i--) { 
-            pIesimoPersonagem = umaFase.get(i);
+        for (int i = fase.getPersonagens().size() - 1; i > 0; i--) { 
+            pIesimoPersonagem = fase.getPersonagens().get(i);
             
+            if (pIesimoPersonagem instanceof ParedeRoda) {
+                if (hero.getPosicao().ParedeVe(pIesimoPersonagem.getPosicao())&&direita){
+                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                hero.moveRight();
+                }
+                else if (hero.getPosicao().ParedeVd(pIesimoPersonagem.getPosicao())&&esquerda){
+                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                hero.moveLeft();
+                }
+                else if (hero.getPosicao().ParedeHc(pIesimoPersonagem.getPosicao())&&baixo){
+                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                hero.moveDown();
+                }
+                else if (hero.getPosicao().ParedeHb(pIesimoPersonagem.getPosicao())&&cima){
+                ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
+                hero.moveUp();
+                }
+            }
+    
             // 1. O Herói está na mesma posição do personagem 'i'?
-            if (hero.getPosicao().igual(pIesimoPersonagem.getPosicao())) {
+            else if (hero.getPosicao().igual(pIesimoPersonagem.getPosicao())) {
                 
                 // 2. O personagem 'i' é transponível?
                 // (Itens não-transponíveis são tratados pelo 'validaPosicao' do Hero)
@@ -72,21 +100,27 @@ public class ControleDeJogo {
                     if (pIesimoPersonagem.isbMortal()) {
                         System.out.println("GAME OVER!");
                         // Lógica de morte: remove o herói e para de checar colisões
-                        umaFase.remove(hero); 
+                        fase.getPersonagens().remove(hero); 
                         break; // Sai do loop 'for'
                     } 
-                    // 4. Se é transponível E NÃO-mortal, é um COLETÁVEL!
-                    else {
-                        // Lógica de coleta:
-                        umaFase.remove(pIesimoPersonagem); // Remove o coletável da fase
-                    }
                 }
             }
         }
 
+        for(int j = fase.getColetaveis().size() - 1; j >= 0; j--)
+        {
+            cIesimoColetavel = fase.getColetaveis().get(j);
+            if(hero.getPosicao().igual(cIesimoColetavel.getPosicao()))
+            {
+                removed.add(cIesimoColetavel);
+            }
+        }
+
+        fase.getColetaveis().removeAll(removed);
+        fase.updatePoints();
     // --- NOVO! ---
     // --- Loop 3: Gerenciamento do spawn dos inimigos ---
-        spawnarInimigos(umaFase);
+        spawnarInimigos(fase.getPersonagens());
 
     }    
 
@@ -116,6 +150,7 @@ public class ControleDeJogo {
                 contadorSpawn = 0;              // reseta o contador
                 borda.resetar();                // reseta a borda
 
+
                 if(Consts.DEBUG){
                     System.out.println("Novo inimigo spawnado no centro! Borda resetada.");
                 }
@@ -128,10 +163,10 @@ public class ControleDeJogo {
     }
 
     /*Retorna true se a posicao p é válida para Hero com relacao a todos os personagens no array*/
-    public boolean ehPosicaoValida(ArrayList<Personagem> umaFase, Posicao p) {
+    public boolean ehPosicaoValida(Fase fase, Posicao p) {
         Personagem pIesimoPersonagem;
-        for (int i = 1; i < umaFase.size(); i++) {
-            pIesimoPersonagem = umaFase.get(i);
+        for (int i = 1; i < fase.getPersonagens().size(); i++) {
+            pIesimoPersonagem = fase.getPersonagens().get(i);
             if (!pIesimoPersonagem.isbTransponivel()) {
                 if (pIesimoPersonagem.getPosicao().igual(p)) {
                     return false;
@@ -139,5 +174,20 @@ public class ControleDeJogo {
             }
         }
         return true;
+    }
+
+    public void passaFase(Tela tela)
+    {
+        if (tela.faseAtual.getNum_to_collect() == 0)
+        {
+            tela.fase_num++;
+            tela.getFases().remove(tela.faseAtual);
+            tela.faseAtual=tela.getFases().get(tela.fase_num);
+            tela.repaint();
+        }
+        else
+        {
+            System.out.println("Tem item a coletar ainda --> " + tela.faseAtual.getNum_to_collect());
+        }
     }
 }
