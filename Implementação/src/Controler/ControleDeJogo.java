@@ -146,6 +146,7 @@ public class ControleDeJogo {
                 contadorSpawn = 0;              // reseta o contador
                 borda.resetar();                // reseta a borda
 
+
                 if(Consts.DEBUG){
                     System.out.println("Novo inimigo spawnado no centro! Borda resetada.");
                 }
