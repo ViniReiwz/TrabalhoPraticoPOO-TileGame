@@ -68,8 +68,9 @@ public class Fase implements Serializable
 
     public void updatePoints()
     {
+        int before = this.num_to_collect;
         this.num_to_collect = this.coletaveis.size();
-        this.pontos++;
+        if(before != this.num_to_collect){this.pontos++;}
     }
 
     public void addHero(Hero hero)
