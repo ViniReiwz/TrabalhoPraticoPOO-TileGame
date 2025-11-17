@@ -356,6 +356,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 direita=true;
             } else if (e.getKeyCode() == KeyEvent.VK_S) 
             {
+                System.out.println("Salvando fase");
                 File ultimafase = new File("UltimaFase.dat");
                 ultimafase.createNewFile();
                 FileOutputStream fos = new FileOutputStream(ultimafase);
@@ -364,7 +365,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 serializador.close();
             } 
             else if (e.getKeyCode() == KeyEvent.VK_L) 
-            {
+            {   
+                System.out.println("Carregando fase");
                 File ultimafase = new File("UltimaFase.dat");
                 FileInputStream fis = new FileInputStream(ultimafase);
                 ObjectInputStream serializador = new ObjectInputStream(fis);
@@ -373,9 +375,10 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 int pos = this.fases.indexOf(fase_carregada);
                 this.fase_num = pos;
                 serializador.close();
+                repaint();
             }
             else if (e.getKeyCode() == KeyEvent.VK_M)
-            {
+            {   
                 File tanque = new File("POO.zip");
                 FileOutputStream canOut = new FileOutputStream(tanque);
                 GZIPOutputStream compact = new GZIPOutputStream(canOut);
