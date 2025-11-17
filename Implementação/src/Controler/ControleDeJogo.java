@@ -2,6 +2,7 @@ package Controler;
 
 import Modelo.Chaser;
 import Modelo.Coletavel;
+import Modelo.ColetavelEspecial;
 import Modelo.ParedeRoda;
 import Modelo.Personagem;
 import Modelo.Hero;
@@ -54,6 +55,7 @@ public class ControleDeJogo {
         Hero hero = fase.heroi;
         Personagem pIesimoPersonagem;
         Coletavel cIesimoColetavel;
+        
 
         ArrayList<Coletavel> removed = new ArrayList<>();
         
@@ -98,7 +100,7 @@ public class ControleDeJogo {
                 if (pIesimoPersonagem.isbTransponivel()) { 
                     if (pIesimoPersonagem.isbMortal() && invencibilidadeTimer == 0) {
                         // Perdeu uma vida!
-                        boolean aindaVivo = fase.perderVida();
+                        boolean aindaVivo = fase.heroi.perderVida();
                         
                         // ==== ATIVA EFEITOS VISUAIS ====
                         if (gameUI != null) {
@@ -110,7 +112,7 @@ public class ControleDeJogo {
                             // Ainda tem vidas, reposiciona o herói e ativa invencibilidade
                             hero.setPosicao(4, 7);
                             invencibilidadeTimer = TEMPO_INVENCIBILIDADE;
-                            System.out.println("ATENÇÃO! Vida perdida! Vidas restantes: " + fase.getVidas());
+                            System.out.println("ATENÇÃO! Vida perdida! Vidas restantes: " + fase.heroi.getVida());
                         } else {
                             // Game Over
                             System.out.println("╔════════════════════╗");
@@ -128,6 +130,9 @@ public class ControleDeJogo {
                     } 
                 }
             }
+
+            
+
         }
 
         // --- Loop 3: Processar coleta de itens ---
@@ -138,6 +143,14 @@ public class ControleDeJogo {
             if(hero.getPosicao().igual(cIesimoColetavel.getPosicao()))
             {
                 removed.add(cIesimoColetavel);
+                if(cIesimoColetavel instanceof ColetavelEspecial)
+                {
+                    if(fase.multiplier == 3)
+                    {
+                        fase.multiplier = 5;
+                    }
+                    else{fase.multiplier++;}
+                }
                 itensColetados++;
             }
         }
