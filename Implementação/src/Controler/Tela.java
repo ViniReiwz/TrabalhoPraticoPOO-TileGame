@@ -99,6 +99,9 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
         Fase fase_1 = new Fase();
 
+        // tempo de spawn pra fase 1
+        fase_1.setTempoSpawnBase(150);
+
         this.faseAtual = fase_1;
         this.addFase(fase_1);
 
@@ -138,6 +141,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
         // Criando fase 2 pra testar passar de fase ==>
         Fase fase_2 = new Fase();
+        
+        fase_2.setTempoSpawnBase(100);
         this.addFase(fase_2);
 
         // --- Inimigo Fase 2---

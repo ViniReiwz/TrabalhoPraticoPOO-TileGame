@@ -32,7 +32,8 @@ public class Fase implements Serializable
     // Sistema de vidas (NOVO!)
     private int vidas = 3;
 
-
+    // Tempo base de spawn para uma fase
+    private int tempoSpawnBase = 150;
 
     public Fase()
     {   
@@ -62,6 +63,14 @@ public class Fase implements Serializable
     public int getNum_to_collect() 
     {
         return num_to_collect;
+    }
+
+    public int getTempoSpawnBase(){
+        return tempoSpawnBase;
+    }
+
+    public void setTempoSpawnBase(int tempoSpawnBase){
+        this.tempoSpawnBase = tempoSpawnBase;
     }
 
     // Spawna todos os personagens
@@ -130,5 +139,4 @@ public class Fase implements Serializable
             this.coletaveis.add(cesp);
         }
     }
-
 }
