@@ -10,7 +10,7 @@ public class Esfera extends Personagem{
         this.bMortal = false;
         this.bTransponivel = false;
     }
- 
+
     public void autoDesenho() {
         super.autoDesenho();
     }    

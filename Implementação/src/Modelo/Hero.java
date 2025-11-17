@@ -26,8 +26,6 @@ public class Hero extends Personagem{
     private ImageIcon ImagemDireita;
 
     private int direcaoAtual = -1; 
-    private int vidas = 3;
-    private Auxiliar.Posicao pPosicaoInicial;
     private int contadorMovimento;
     private final int VELOCIDADE_ATRASO = 3; //Controle de movimento do heroi
 
