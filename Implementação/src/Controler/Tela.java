@@ -272,7 +272,10 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             
         }
         faseAtual.getColetaveis().removeAll(removed);
-        faseAtual.updatePoints();
+        for(Coletavel c : removed)
+        {
+            faseAtual.updatePoints(c);
+        }
     }
 
     public void removePersonagem(Personagem umPersonagem) {

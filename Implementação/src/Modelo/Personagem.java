@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 
 public abstract class Personagem implements Serializable {
 
+    protected String NomeImage;
     protected ImageIcon iImage;
     protected Posicao pPosicao;
     protected boolean bTransponivel; /*Pode passar por cima?*/
@@ -26,6 +27,8 @@ public abstract class Personagem implements Serializable {
         this.pPosicao = new Posicao(1, 1);
         this.bTransponivel = true;
         this.bMortal = false;
+        this.NomeImage = sNomeImagePNG;
+        
         try {
             iImage = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + sNomeImagePNG);
             Image img = iImage.getImage();
