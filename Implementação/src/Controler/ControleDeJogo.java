@@ -13,6 +13,7 @@ import Modelo.Hero;
 import Auxiliar.Posicao;
 import Auxiliar.Consts;
 import Auxiliar.BordaCronometro;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 public class ControleDeJogo {
@@ -22,6 +23,7 @@ public class ControleDeJogo {
     private int maxInimigos;
     private Posicao posicaoSpawnCentral;            // para spawnar no centro do game
     private BordaCronometro borda;                  // lógica da borda cronometrada
+    ArrayList<Rectangle> objetosDeColisao = new ArrayList<>();
 
 
     public ControleDeJogo(){

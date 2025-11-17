@@ -85,9 +85,6 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         String imgPRH = "paredeRodaHorizontal.png"; //
 
         // --- Inimigo ---
-        Chaser chase = new Chaser("chaser.png", 12, 12); // Posição inicial do inimigo
-        this.addPersonagem(chase);
-
         ZigueZague zz = new ZigueZague("bomba.png", 5, 5);
 
         BichinhoVaiVemHorizontal bBichinhoH = new BichinhoVaiVemHorizontal("roboPink.png", 3, 3);
