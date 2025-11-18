@@ -50,7 +50,7 @@ public class GameUI {
     
     private void carregarIcones() {
         try {
-            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima.png");
+            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima3.png");
             Image img = tempIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
             vidaIcon = new ImageIcon(img);
             

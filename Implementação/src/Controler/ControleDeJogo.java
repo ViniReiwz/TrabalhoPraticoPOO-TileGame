@@ -47,8 +47,8 @@ public class ControleDeJogo {
     }
 
     public void desenhaTudo(Fase fase) {
-        fase.spawnAllPers();
         fase.spawnAllColl();
+        fase.spawnAllPers();
     }
     
     public void processaTudo(Fase fase, boolean cima, boolean baixo, boolean esquerda, boolean direita) {

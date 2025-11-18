@@ -1,18 +1,11 @@
 package Modelo;
 
 import Auxiliar.Desenho;
-import Controler.ControleDeJogo;
-import Controler.Tela;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.io.IOException;
-import java.io.Serializable;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.image.BufferedImage;
 import java.awt.Image;
-import java.io.IOException;
 import Auxiliar.Consts;
 
 public class Hero extends Personagem {

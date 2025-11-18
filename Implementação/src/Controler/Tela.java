@@ -121,7 +121,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
         Caveira bV = new Caveira("caveira.png", 9, 1);
 
-        Chaser chase1 = new Chaser("chaser.png", 20, 8);    // centro do mapa (20, 8)
+        Chaser chase1 = new Chaser("vilao2", 20, 8);    // centro do mapa (20, 8)
       
         fase_1.addHero(hero);
         fase_1.addPers(hero);
