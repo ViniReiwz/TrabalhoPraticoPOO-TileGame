@@ -128,13 +128,18 @@ public class Fase implements Serializable
 
     private void addSpecial()
     {
-        for(int i = 0; i < 4; i ++)
+        for(int i = 0; i < 4; i++)
         {
-            int special_pos = ThreadLocalRandom.current().nextInt(0,this.coletaveis.size());
+            int special_pos = ThreadLocalRandom.current().nextInt(0, this.coletaveis.size());
             Coletavel c = this.coletaveis.get(special_pos);
-            ColetavelEspecial cesp = new ColetavelEspecial("bricks.png", c.getPosicao().getLinha(), c.getPosicao().getColuna());
+        
+            // Gera um número aleatório para escolher entre bricks1, bricks2
+            int brickType = ThreadLocalRandom.current().nextInt(1, 6);
+            String brickImage = "bricks" + brickType + ".png";
+        
+            ColetavelEspecial cesp = new ColetavelEspecial(brickImage, c.getPosicao().getLinha(), c.getPosicao().getColuna());
             this.coletaveis.remove(c);
             this.coletaveis.add(cesp);
         }
-    }
+    } 
 }

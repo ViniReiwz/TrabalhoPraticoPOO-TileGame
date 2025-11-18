@@ -190,7 +190,7 @@ public class ControleDeJogo {
             borda.atualizarProgresso(progresso);
 
             if(contadorSpawn >= tempoDaFase){
-                int tipoVilao = (int)(Math.random() * 5) + 1;
+                int tipoVilao = (int)(Math.random() * 8) + 1;
                 String nomeVilao = "vilao" + tipoVilao;
                 Chaser novoInimgo = new Chaser(nomeVilao, posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
                 fase.addPers(novoInimgo);
