@@ -2,11 +2,16 @@ package Modelo;
 
 import Auxiliar.Desenho;
 import Auxiliar.Posicao;
+import Auxiliar.Consts;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.swing.ImageIcon;
 
 public class Chaser extends Personagem {
 
     //Variáveis onde o heroi esta
-    //Isso e o computeDirection q vai definir.
     private boolean heroEstaAEsquerda;
     private boolean heroEstaAcima;
 
@@ -15,6 +20,23 @@ public class Chaser extends Personagem {
     private int direcaoAtual; 
 
     private int counter;
+    
+    //Animação dos vilões
+    private ImageIcon[] framesAnimacaoCima;
+    private ImageIcon[] framesAnimacaoBaixo;
+    private ImageIcon[] framesAnimacaoEsquerda;
+    private ImageIcon[] framesAnimacaoDireita;
+    
+    private int frameAtual = 0;
+    private int contadorAnimacao = 0;
+    private double velocidadeAnimacao = 2;
+    private int totalFrames = 3;
+    
+    private boolean animacaoIndo = true;
+    
+    // Prefixo do nome das imagens (no nosso caso serão vilao1,
+    //vilao2, vilao3, vilao4 e vilao5)
+    private String prefixoImagem;
 
     public Chaser(String sNomeImagePNG, int linha, int coluna) {
         super(sNomeImagePNG, linha, coluna);
@@ -26,7 +48,97 @@ public class Chaser extends Personagem {
         counter = 0;
         
         //Direção inicial aleatória (pode mudar se necessário)
-        direcaoAtual = 0; //inicialmente para a direita 
+        direcaoAtual = 0; //inicialmente para a direita
+        
+        // Extrai o prefixo do nome da imagem (remove .png)
+        this.prefixoImagem = sNomeImagePNG.replace(".png", "");
+        
+        // Inicializa os arrays de frames
+        framesAnimacaoCima = new ImageIcon[totalFrames];
+        framesAnimacaoBaixo = new ImageIcon[totalFrames];
+        framesAnimacaoEsquerda = new ImageIcon[totalFrames];
+        framesAnimacaoDireita = new ImageIcon[totalFrames];
+        
+        // Carrega todos os frames de cada direção
+        carregarFramesAnimacao();
+        
+        // Define a imagem inicial (direita, frame 0)
+        this.iImage = framesAnimacaoDireita[0];
+    }
+
+    private void carregarFramesAnimacao() {
+        //Carrega frames para cada direção
+        //Formato esperado: vilao1cima1.png, vilao1cima2.png, vilao1cima3.png
+        
+        framesAnimacaoCima[0] = carregarImagem(prefixoImagem + "cima1.png");
+        framesAnimacaoCima[1] = carregarImagem(prefixoImagem + "cima2.png");
+        framesAnimacaoCima[2] = carregarImagem(prefixoImagem + "cima3.png");
+        
+        framesAnimacaoBaixo[0] = carregarImagem(prefixoImagem + "baixo1.png");
+        framesAnimacaoBaixo[1] = carregarImagem(prefixoImagem + "baixo2.png");
+        framesAnimacaoBaixo[2] = carregarImagem(prefixoImagem + "baixo3.png");
+        
+        framesAnimacaoEsquerda[0] = carregarImagem(prefixoImagem + "esquerda1.png");
+        framesAnimacaoEsquerda[1] = carregarImagem(prefixoImagem + "esquerda2.png");
+        framesAnimacaoEsquerda[2] = carregarImagem(prefixoImagem + "esquerda3.png");
+        
+        framesAnimacaoDireita[0] = carregarImagem(prefixoImagem + "direita1.png");
+        framesAnimacaoDireita[1] = carregarImagem(prefixoImagem + "direita2.png");
+        framesAnimacaoDireita[2] = carregarImagem(prefixoImagem + "direita3.png");
+    }
+    
+    private ImageIcon carregarImagem(String sNomeImagePNG) {
+        try {
+            ImageIcon iNewImage = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + sNomeImagePNG);
+            Image img = iNewImage.getImage();
+            BufferedImage bi = new BufferedImage(Consts.CELL_SIDE, Consts.CELL_SIDE, BufferedImage.TYPE_INT_ARGB);
+            Graphics g = bi.createGraphics();
+            g.drawImage(img, 0, 0, Consts.CELL_SIDE, Consts.CELL_SIDE, null);
+            return new ImageIcon(bi);
+        } catch (IOException ex) {
+            System.out.println("Erro ao carregar imagem: " + sNomeImagePNG + " - " + ex.getMessage());
+            // Retorna a imagem padrão se houver erro
+            return this.iImage;
+        }
+    }
+    
+    private void atualizarAnimacao() {
+        contadorAnimacao++;
+        
+        if(contadorAnimacao >= velocidadeAnimacao) {
+            contadorAnimacao = 0;
+
+            if(animacaoIndo) {
+                frameAtual++;
+                if(frameAtual >= totalFrames - 1) {
+                    animacaoIndo = false;
+                }
+            } else {
+                frameAtual--;
+                if(frameAtual <= 0) {
+                    animacaoIndo = true;
+                }
+            }
+
+            atualizarImagemPorDirecao();
+        }
+    }
+    
+    private void atualizarImagemPorDirecao() {
+        switch(direcaoAtual) {
+            case 0: // Direita
+                this.iImage = framesAnimacaoDireita[frameAtual];
+                break;
+            case 1: // Esquerda
+                this.iImage = framesAnimacaoEsquerda[frameAtual];
+                break;
+            case 2: // Cima
+                this.iImage = framesAnimacaoCima[frameAtual];
+                break;
+            case 3: // Baixo
+                this.iImage = framesAnimacaoBaixo[frameAtual];
+                break;
+        }
     }
 
     //Analisa a posição do heroi em relação ao perseguidor
@@ -46,7 +158,7 @@ public class Chaser extends Personagem {
 
    
     public void autoDesenho() {
-        if (counter == 0) { //Controla a velocidade do inimigo (pode alterar se precisar, quanto maior mais lento)
+        if (counter == 0) {
             counter = 0;
 
             Posicao proximaPosicao = new Posicao(this.getPosicao().getLinha(), this.getPosicao().getColuna());
@@ -67,8 +179,6 @@ public class Chaser extends Personagem {
                     break;
             }
 
-            // O Chaser usa a mesma validação de posição que o heroi
-            // Isso garante que ele vai parar em ParedeV, ParedeH e ParedeRoda.
             if (Desenho.acessoATelaDoJogo().ehPosicaoValida(proximaPosicao)) {
                 // Caminho livre, mover
                 this.setPosicao(proximaPosicao.getLinha(), proximaPosicao.getColuna());
@@ -81,6 +191,9 @@ public class Chaser extends Personagem {
         } else {
             counter++;
         }
+        
+        // Atualiza a animação antes de desenhar
+        atualizarAnimacao();
         
         super.autoDesenho();
     }
@@ -101,40 +214,42 @@ public class Chaser extends Personagem {
         // Tentar virar na horizontal (Esquerda/Direita)
         if (heroEstaAEsquerda && movimentosValidos[1] && direcaoAtual != 0) { // Tentar ir Esquerda
             direcaoAtual = 1;
+            atualizarImagemPorDirecao();
             return;
         }
         if (!heroEstaAEsquerda && movimentosValidos[0] && direcaoAtual != 1) { // Tentar ir Direita
             direcaoAtual = 0;
+            atualizarImagemPorDirecao();
             return;
         }
 
         // Tentar virar na vertical (Cima/Baixo)
         if (heroEstaAcima && movimentosValidos[2] && direcaoAtual != 3) { // Tentar ir Cima
             direcaoAtual = 2;
+            atualizarImagemPorDirecao();
             return;
         }
         if (!heroEstaAcima && movimentosValidos[3] && direcaoAtual != 2) { // Tentar ir Baixo
             direcaoAtual = 3;
+            atualizarImagemPorDirecao();
             return;
         }
 
         //se as "melhores" opções estiverem bloqueadas, pegar qualquer uma válida
-        //(exceto a oposta, se possível)
         for (int i = 0; i < 4; i++) {
             if (movimentosValidos[i]) {
-                if (i == 0 && direcaoAtual != 1) { direcaoAtual = i; return; } // Direita (não oposto de Esq)
-                if (i == 1 && direcaoAtual != 0) { direcaoAtual = i; return; } // Esquerda (não oposto de Dir)
-                if (i == 2 && direcaoAtual != 3) { direcaoAtual = i; return; } // Cima (não oposto de Baixo)
-                if (i == 3 && direcaoAtual != 2) { direcaoAtual = i; return; } // Baixo (não oposto de Cima)
+                if (i == 0 && direcaoAtual != 1) { direcaoAtual = i; atualizarImagemPorDirecao(); return; }
+                if (i == 1 && direcaoAtual != 0) { direcaoAtual = i; atualizarImagemPorDirecao(); return; }
+                if (i == 2 && direcaoAtual != 3) { direcaoAtual = i; atualizarImagemPorDirecao(); return; }
+                if (i == 3 && direcaoAtual != 2) { direcaoAtual = i; atualizarImagemPorDirecao(); return; }
             }
         }
         
         //Se estiver preso em um beco sem saída da meia volta
-        if (movimentosValidos[0]) { direcaoAtual = 0; return; }
-        if (movimentosValidos[1]) { direcaoAtual = 1; return; }
-        if (movimentosValidos[2]) { direcaoAtual = 2; return; }
-        if (movimentosValidos[3]) { direcaoAtual = 3; return; }
-
+        if (movimentosValidos[0]) { direcaoAtual = 0; atualizarImagemPorDirecao(); return; }
+        if (movimentosValidos[1]) { direcaoAtual = 1; atualizarImagemPorDirecao(); return; }
+        if (movimentosValidos[2]) { direcaoAtual = 2; atualizarImagemPorDirecao(); return; }
+        if (movimentosValidos[3]) { direcaoAtual = 3; atualizarImagemPorDirecao(); return; }
     }
 
     //Método auxiliar para checar se uma célula é válida.
