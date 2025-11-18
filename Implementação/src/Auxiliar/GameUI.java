@@ -66,13 +66,13 @@ public class GameUI {
     /**
      * Desenha toda a interface do usuário
      */
-    public void desenhar(Graphics g, Tela tela, Fase fase) {
+    public void desenhar(Graphics g,Graphics gjogo, Tela tela, Fase fase) {
         int larguraTela = Consts.RES * Consts.CELL_SIDE;
         int alturaTela = Consts.RES * Consts.CELL_SIDE;
         
         // ==== FLASH VERMELHO ao ser atingido ====
         if (flashTimer > 0) {
-            desenharFlashVermelho(g, larguraTela, alturaTela);
+            desenharFlashVermelho(gjogo, larguraTela, alturaTela);
             flashTimer--;
         }
         
