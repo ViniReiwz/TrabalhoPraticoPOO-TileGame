@@ -36,9 +36,9 @@ public class Fase implements Serializable
     public Fase()
     {   
 
-        for(int i = 0; i < Consts.MUNDO_ALTURA; i++)
+        for(int i = 0; i < ((Consts.MUNDO_ALTURA) - 1); i++)
         {
-            for(int j = 0; j < Consts.MUNDO_LARGURA; j++)
+            for(int j = 0; j < ((Consts.MUNDO_LARGURA) - 1); j++)
             {
                 Coletavel c = new Coletavel("explosao.png", i, j);
                 this.coletaveis.add(c);
@@ -101,7 +101,7 @@ public class Fase implements Serializable
 
     public void addHero(Hero hero)
     {   
-        hero.setPosicao(4, 7);
+        hero.setPosicao(5, 7);
         this.heroi = hero;
     }
 

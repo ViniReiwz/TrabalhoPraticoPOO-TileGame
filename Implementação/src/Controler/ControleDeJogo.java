@@ -47,8 +47,8 @@ public class ControleDeJogo {
     }
 
     public void desenhaTudo(Fase fase) {
-        fase.spawnAllPers();
         fase.spawnAllColl();
+        fase.spawnAllPers();
     }
     
     public void processaTudo(Fase fase, boolean cima, boolean baixo, boolean esquerda, boolean direita) {
@@ -110,7 +110,7 @@ public class ControleDeJogo {
                         
                         if (aindaVivo) {
                             // Ainda tem vidas, reposiciona o herói e ativa invencibilidade
-                            hero.setPosicao(4, 7);
+                            hero.setPosicao(5, 7);
                             invencibilidadeTimer = TEMPO_INVENCIBILIDADE;
                             System.out.println("ATENÇÃO! Vida perdida! Vidas restantes: " + fase.heroi.getVida());
                         } else {
@@ -190,7 +190,9 @@ public class ControleDeJogo {
             borda.atualizarProgresso(progresso);
 
             if(contadorSpawn >= tempoDaFase){
-                Chaser novoInimgo = new Chaser("Chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
+                int tipoVilao = (int)(Math.random() * 5) + 1;
+                String nomeVilao = "vilao" + tipoVilao;
+                Chaser novoInimgo = new Chaser(nomeVilao, posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
                 fase.addPers(novoInimgo);
                 contadorSpawn = 0;
                 borda.resetar();

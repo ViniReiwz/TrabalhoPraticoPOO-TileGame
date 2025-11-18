@@ -1,3 +1,4 @@
+
 package Auxiliar;
 
 import java.awt.Color;
@@ -20,6 +21,7 @@ public class GameUI {
     // Animação de pontuação
     private int pontosExibidos;
     private int pontosAlvo;
+    private static final double VELOCIDADE_ANIMACAO = 0.6;
     
     // Flash vermelho ao ser atingido
     private int flashTimer;
@@ -33,6 +35,7 @@ public class GameUI {
     private final Color COR_TEXTO_PRINCIPAL = new Color(255, 255, 0);
     private final Color COR_TEXTO_DESTAQUE = new Color(255, 100, 100);
     private final Color COR_PONTUACAO = new Color(0, 255, 0);
+    private final Color COR_FLASH = new Color(255, 0, 0, 100); // Vermelho semi-transparente
     
     public GameUI() {
         this.highScore = 0;
