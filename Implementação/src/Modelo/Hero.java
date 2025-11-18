@@ -2,17 +2,11 @@ package Modelo;
 
 import Auxiliar.Desenho;
 import Controler.ControleDeJogo;
-import Controler.Tela;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.io.IOException;
-import java.io.Serializable;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.image.BufferedImage;
 import java.awt.Image;
-import java.io.IOException;
+import javax.swing.ImageIcon;
 import Auxiliar.Consts;
 
 public class Hero extends Personagem {
@@ -26,11 +20,16 @@ public class Hero extends Personagem {
     private int contadorAnimacao = 0;
     private double velocidadeAnimacao = 0.25;
     private int totalFrames = 3;
-    private int vida = 3;
     
     private boolean animacaoIndo = true;
-    
     private String direcaoAtual = "cima";
+    
+    // Sistema de vidas
+    private int vidas = 3;
+    private final int VIDAS_MAXIMAS = 3;
+    
+    // Referência para verificar invencibilidade
+    private ControleDeJogo controleJogo;
     
     public Hero(String sNomeImagePNG, int linha, int coluna){
         super(sNomeImagePNG, linha, coluna);
@@ -48,12 +47,44 @@ public class Hero extends Personagem {
         this.iImage = framesAnimacaoCima[0];
     }
     
+    public void setControleJogo(ControleDeJogo controle) {
+        this.controleJogo = controle;
+    }
+
+    public int getVida() {
+        return vidas;
+    }
+
+    public void setVida(int vidas) {
+        this.vidas = Math.max(0, Math.min(vidas, VIDAS_MAXIMAS));
+    }
+
+    public boolean perderVida() {
+        if (vidas > 0) {
+            vidas--;
+        }
+        return vidas > 0;
+    }
+
+    public void ganharVida() {
+        if (vidas < VIDAS_MAXIMAS) {
+            vidas++;
+        }
+    }
+    
+    public boolean estaMorto() {
+        return vidas <= 0;
+    }
+
+    public void resetarVidas() {
+        vidas = VIDAS_MAXIMAS;
+    }
+    
     private void carregarFramesAnimacao(){
         // Carrega frames para CIMA
         framesAnimacaoCima[0] = carregarImagem("joaninhaCima1.png");
         framesAnimacaoCima[1] = carregarImagem("joaninhaCima2.png");
         framesAnimacaoCima[2] = carregarImagem("joaninhaCima3.png");
-  
         
         // Carrega frames para BAIXO
         framesAnimacaoBaixo[0] = carregarImagem("joaninhaBaixo1.png");
@@ -65,12 +96,10 @@ public class Hero extends Personagem {
         framesAnimacaoEsquerda[1] = carregarImagem("joaninhaEsquerda2.png");
         framesAnimacaoEsquerda[2] = carregarImagem("joaninhaEsquerda3.png");
         
-        
         // Carrega frames para DIREITA
         framesAnimacaoDireita[0] = carregarImagem("joaninhaDireita1.png");
         framesAnimacaoDireita[1] = carregarImagem("joaninhaDireita2.png");
         framesAnimacaoDireita[2] = carregarImagem("joaninhaDireita3.png");
-        
     }
     
     private ImageIcon carregarImagem(String sNomeImagePNG) {
@@ -80,6 +109,7 @@ public class Hero extends Personagem {
             BufferedImage bi = new BufferedImage(Consts.CELL_SIDE, Consts.CELL_SIDE, BufferedImage.TYPE_INT_ARGB);
             Graphics g = bi.createGraphics();
             g.drawImage(img, 0, 0, Consts.CELL_SIDE, Consts.CELL_SIDE, null);
+            g.dispose();
             return new ImageIcon(bi);
         } catch (IOException ex){
             System.out.println("Erro ao carregar imagem: " + sNomeImagePNG + " - " + ex.getMessage());
@@ -113,22 +143,38 @@ public class Hero extends Personagem {
         switch(direcaoAtual){
             case "cima":
                 this.iImage = framesAnimacaoCima[frameAtual];
-            break;
+                break;
             case "baixo":
                 this.iImage = framesAnimacaoBaixo[frameAtual];
-            break;
+                break;
             case "esquerda":
                 this.iImage = framesAnimacaoEsquerda[frameAtual];
-            break;
+                break;
             case "direita":
                 this.iImage = framesAnimacaoDireita[frameAtual];
-            break;
+                break;
         }
     }
 
+    @Override
     public void autoDesenho(){
         atualizarAnimacao();
-        super.autoDesenho();
+        
+        // Verifica se está invencível
+        boolean invencivel = (controleJogo != null && controleJogo.estaInvencivel());
+        
+        if (invencivel) {
+            // Efeito de piscar durante invencibilidade
+            int ciclo = (int)(System.currentTimeMillis() / 100) % 2;
+            if (ciclo == 0) {
+                // Desenha normalmente (frame visível)
+                super.autoDesenho();
+            }
+            // Se ciclo == 1, não desenha nada (frame invisível = piscar)
+        } else {
+            // Desenha normalmente quando não está invencível
+            super.autoDesenho();
+        }
     }
     
     public void voltaAUltimaPosicao(){
@@ -187,51 +233,5 @@ public class Hero extends Personagem {
             return validaPosicao();
         }
         return false;
-    }    
-
-    // ===== NOVOS MÉTODOS PARA O SISTEMA DE this.VIDA =====
-    
-    /**
-     * Retorna o número de this.vida restantes
-     */
-    public int getVida() {
-        return this.vida;
-    }
-    
-    /**
-     * Remove uma vida do jogador
-     * @return true se ainda tem vida, false se game over
-     */
-    public boolean perderVida() {
-        if (this.vida > 0) {
-            this.vida--;
-            System.out.println("Vida perdida! this.Vida restantes: " + this.vida);
-            return this.vida > 0;
-        }
-        return false;
-    }
-    
-    /**
-     * Adiciona uma vida (para power-ups futuros)
-     */
-    public void ganharVida() {
-        if (this.vida < 3) {
-            this.vida++;
-            System.out.println("Vida recuperada! this.Vida: " + this.vida);
-        }
-    }
-    
-    /**
-     * Reseta as this.vida para o valor inicial
-     */
-    public void resetarVida() {
-        this.vida = 3;
-    }
-    
-    /**
-     * Verifica se o jogador ainda está vivo
-     */
-    public boolean estaVivo() {
-        return this.vida > 0;
     }
 }
