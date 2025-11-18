@@ -20,7 +20,6 @@ public class GameUI {
     // Animação de pontuação
     private int pontosExibidos;
     private int pontosAlvo;
-    private static final double VELOCIDADE_ANIMACAO = 0.6;
     
     // Flash vermelho ao ser atingido
     private int flashTimer;
@@ -34,7 +33,6 @@ public class GameUI {
     private final Color COR_TEXTO_PRINCIPAL = new Color(255, 255, 0);
     private final Color COR_TEXTO_DESTAQUE = new Color(255, 100, 100);
     private final Color COR_PONTUACAO = new Color(0, 255, 0);
-    private final Color COR_FLASH = new Color(255, 0, 0, 100); // Vermelho semi-transparente
     
     public GameUI() {
         this.highScore = 0;
@@ -50,7 +48,7 @@ public class GameUI {
     
     private void carregarIcones() {
         try {
-            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima.png");
+            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima3.png");
             Image img = tempIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
             vidaIcon = new ImageIcon(img);
             
