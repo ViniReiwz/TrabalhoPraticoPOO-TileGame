@@ -105,13 +105,13 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         
         // --- Inimigo ---
 
-        Chaser chase = new Chaser("roboPink.png", 12, 12); // Posição inicial do inimigo
+        Chaser chase = new Chaser("vilao1", 12, 12); // Posição inicial do inimigo
 
         ZigueZague zz = new ZigueZague("bomba.png", 5, 5);
 
-        BichinhoVaiVemHorizontal bBichinhoH = new BichinhoVaiVemHorizontal("roboPink.png", 3, 3);
+        BichinhoVaiVemHorizontal bBichinhoH = new BichinhoVaiVemHorizontal("vilao1cima1.png", 3, 3);
 
-        BichinhoVaiVemHorizontal bBichinhoH2 = new BichinhoVaiVemHorizontal("roboPink.png", 6,6);
+        BichinhoVaiVemHorizontal bBichinhoH2 = new BichinhoVaiVemHorizontal("vilao1cima1.png", 6,6);
 
         BichinhoVaiVemVertical bVv = new BichinhoVaiVemVertical("Caveira.png", 10,10);
 
@@ -144,7 +144,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
         ZigueZague zz2 = new ZigueZague("bomba.png", 5, 5);
 
-        BichinhoVaiVemHorizontal bBichinhoH222 = new BichinhoVaiVemHorizontal("roboPink.png", 3, 3);
+        BichinhoVaiVemHorizontal bBichinhoH222 = new BichinhoVaiVemHorizontal("vilao2cima2.png", 3, 3);
 
         BichinhoVaiVemVertical bVv2 = new BichinhoVaiVemVertical("Caveira.png", 10,10);
 
@@ -154,7 +154,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         Esfera es2 = new Esfera("esfera.png", 10, 13);
 
 
-        Chaser chase2 = new Chaser("chaser.png", 20, 8);    // centro do mapa (20, 8)
+        Chaser chase2 = new Chaser("vilao2", 20, 8);    // centro do mapa (20, 8)
 
         fase_2.addHero(hero2);
         fase_2.addPers(hero2);
