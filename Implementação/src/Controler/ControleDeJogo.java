@@ -190,7 +190,7 @@ public class ControleDeJogo {
             borda.atualizarProgresso(progresso);
 
             if(contadorSpawn >= tempoDaFase){
-                Chaser novoInimgo = new Chaser("chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
+                Chaser novoInimgo = new Chaser("Chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
                 fase.addPers(novoInimgo);
                 contadorSpawn = 0;
                 borda.resetar();

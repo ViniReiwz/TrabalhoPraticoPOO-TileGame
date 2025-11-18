@@ -18,6 +18,7 @@ public class Fase implements Serializable
     // ArrayList com os coletáveis
     private ArrayList<Coletavel> coletaveis = new ArrayList<>();
 
+
     // Número de coletaveis (ao chegar em 0 a fase deve acabar - Não implementado ainda)
     private int num_to_collect = -1;
 
@@ -28,9 +29,6 @@ public class Fase implements Serializable
 
     // Sistema de pontuação
     private int pontos = 0;
-    
-    // Sistema de vidas (NOVO!)
-    private int vidas = 3;
 
     // Tempo base de spawn para uma fase
     private int tempoSpawnBase = 150;
