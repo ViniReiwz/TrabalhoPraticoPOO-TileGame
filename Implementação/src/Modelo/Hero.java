@@ -26,6 +26,7 @@ public class Hero extends Personagem {
     private int contadorAnimacao = 0;
     private double velocidadeAnimacao = 0.25;
     private int totalFrames = 3;
+    private int vida = 3;
     
     private boolean animacaoIndo = true;
     
@@ -186,5 +187,51 @@ public class Hero extends Personagem {
             return validaPosicao();
         }
         return false;
+    }    
+
+    // ===== NOVOS MÉTODOS PARA O SISTEMA DE this.VIDA =====
+    
+    /**
+     * Retorna o número de this.vida restantes
+     */
+    public int getVida() {
+        return this.vida;
+    }
+    
+    /**
+     * Remove uma vida do jogador
+     * @return true se ainda tem vida, false se game over
+     */
+    public boolean perderVida() {
+        if (this.vida > 0) {
+            this.vida--;
+            System.out.println("Vida perdida! this.Vida restantes: " + this.vida);
+            return this.vida > 0;
+        }
+        return false;
+    }
+    
+    /**
+     * Adiciona uma vida (para power-ups futuros)
+     */
+    public void ganharVida() {
+        if (this.vida < 3) {
+            this.vida++;
+            System.out.println("Vida recuperada! this.Vida: " + this.vida);
+        }
+    }
+    
+    /**
+     * Reseta as this.vida para o valor inicial
+     */
+    public void resetarVida() {
+        this.vida = 3;
+    }
+    
+    /**
+     * Verifica se o jogador ainda está vivo
+     */
+    public boolean estaVivo() {
+        return this.vida > 0;
     }
 }
