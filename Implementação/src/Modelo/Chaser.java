@@ -29,8 +29,9 @@ public class Chaser extends Personagem {
     
     private int frameAtual = 0;
     private int contadorAnimacao = 0;
-    private double velocidadeAnimacao = 2;
+    private double velocidadeAnimacao = 4;
     private int totalFrames = 3;
+    private int move_delay;
     
     private boolean animacaoIndo = true;
     
@@ -38,9 +39,9 @@ public class Chaser extends Personagem {
     //vilao2, vilao3, vilao4 e vilao5)
     private String prefixoImagem;
 
-    public Chaser(String sNomeImagePNG, int linha, int coluna) {
+    public Chaser(String sNomeImagePNG, int linha, int coluna, int move_delay) {
         super(sNomeImagePNG, linha, coluna);
-        
+        this.move_delay = move_delay;
         //Inimigos são transponíveis mas mortais >:D
         this.bTransponivel = true; 
         this.bMortal = true;
@@ -158,7 +159,7 @@ public class Chaser extends Personagem {
 
    
     public void autoDesenho() {
-        if (counter == 0) {
+        if (counter == this.move_delay) {
             counter = 0;
 
             Posicao proximaPosicao = new Posicao(this.getPosicao().getLinha(), this.getPosicao().getColuna());

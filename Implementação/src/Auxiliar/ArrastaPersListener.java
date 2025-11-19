@@ -62,10 +62,10 @@ public class ArrastaPersListener implements DropTargetListener {
 
                     if(p instanceof Personagem pers)                                                        // Verifica se 'p' é da classe 'Personagem'
                     {
-                        this.tela.addPersonagem(pers);                                                      // Adiciona 'pers' à lista de personagems
+                        this.tela.getFaseAtual().addPers(pers);                                                      // Adiciona 'pers' à lista de personagems
 
                         Point posicao = dtde.getLocation();                                                 // Pega a posição (em pixels) do mouse no momento do drop
-                        pers.setPosicao((posicao.y / Consts.CELL_SIDE) - 1 + this.tela.getCameraLinha() , (posicao.x / Consts.CELL_SIDE) + this.tela.getCameraColuna());  // Normaliza a posição e corrige o posicionamento para se encaixar nos tiles da tela 
+                        pers.setPosicao((posicao.y / Consts.CELL_SIDE) - 1, (posicao.x / Consts.CELL_SIDE));  // Normaliza a posição e corrige o posicionamento para se encaixar nos tiles da tela 
                         if(Consts.DEBUG)
                         {
                             System.out.println("Posicao do mouse --> " + posicao);
