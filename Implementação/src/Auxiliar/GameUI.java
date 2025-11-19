@@ -1,3 +1,4 @@
+
 package Auxiliar;
 
 import java.awt.Color;
@@ -50,7 +51,7 @@ public class GameUI {
     
     private void carregarIcones() {
         try {
-            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima.png");
+            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima3.png");
             Image img = tempIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
             vidaIcon = new ImageIcon(img);
             
@@ -66,13 +67,13 @@ public class GameUI {
     /**
      * Desenha toda a interface do usuário
      */
-    public void desenhar(Graphics g, Tela tela, Fase fase) {
+    public void desenhar(Graphics g,Graphics gjogo, Tela tela, Fase fase) {
         int larguraTela = Consts.RES * Consts.CELL_SIDE;
         int alturaTela = Consts.RES * Consts.CELL_SIDE;
         
         // ==== FLASH VERMELHO ao ser atingido ====
         if (flashTimer > 0) {
-            desenharFlashVermelho(g, larguraTela, alturaTela);
+            desenharFlashVermelho(gjogo, larguraTela, alturaTela);
             flashTimer--;
         }
         
@@ -200,7 +201,7 @@ public class GameUI {
     private void desenharVidas(Graphics g, Fase fase) {
         int x = 10;
         int y = 45;
-        int vidasRestantes = fase.getVidas();
+        int vidasRestantes = fase.heroi.getVida();
         
         // Label "VIDAS"
         g.setFont(new Font("Courier New", Font.BOLD, 14));

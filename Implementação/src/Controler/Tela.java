@@ -1,25 +1,9 @@
 package Controler;
 
-import Modelo.Coletavel;
-import Auxiliar.GameUI;
-import Modelo.Personagem;
-import Modelo.ParedeRoda;
-import Modelo.Caveira;
-import Modelo.Hero;
-import Modelo.Chaser;
-import Modelo.BichinhoVaiVemHorizontal;
-import Auxiliar.ArrastaPersListener;
-import Auxiliar.Consts;
-import Auxiliar.Desenho;
-import Modelo.BichinhoVaiVemVertical;
-import Modelo.Esfera;
-import Modelo.ZigueZague;
-import Auxiliar.Posicao;
-import Modelo.ParedeH;
-import Modelo.ParedeV;
+import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.dnd.DropTarget;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -28,7 +12,6 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -36,10 +19,22 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import Auxiliar.GameUI;
+import Auxiliar.ArrastaPersListener;
+import Auxiliar.Consts;
+import Auxiliar.Desenho;
+import Auxiliar.Posicao;
+
+import Modelo.Coletavel;
+import Modelo.Personagem;
+import Modelo.ParedeRoda;
+import Modelo.Caveira;
+import Modelo.Hero;
+import Modelo.Chaser;
+import Modelo.ParedeH;
+import Modelo.ParedeV;
 import Modelo.Fase;
 import Modelo.ParedeRodaMeio;
 
@@ -52,6 +47,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
     private int cameraLinha = 0;
     private int cameraColuna = 0;
     public int fase_num = 0;
+    public int x_offset;
+    public int y_offset;
     private final Set<Integer> teclasPressionadas = new HashSet<>();
     private boolean cima, baixo, esquerda,direita;
     private GameUI gameUI = new GameUI();
@@ -82,11 +79,25 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         this.setSize(Consts.RES * Consts.CELL_SIDE + getInsets().left + getInsets().right,
                 Consts.RES * Consts.CELL_SIDE + getInsets().top + getInsets().bottom);
 
+        this.setLocationRelativeTo(null);
+        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        setResizable(true);
+        
+
+        // JPanel wrapper = new JPanel(new GridBagLayout());
+        // wrapper.setBackground(Color.BLACK);
+        // wrapper.add(this);
+        // setContentPane(wrapper);
+
         // --- Definição das Imagens ---
         String imgPH = "ParedeHorizontal.png"; //
         String imgPV = "ParedeVertical.png";   //
         String imgPRV = "ParedeRodaVertical.png"; //
         String imgPRH = "paredeRodaHorizontal.png"; //
+        String imgC1 = "canto1.png";
+        String imgC2 = "canto2.png";
+        String imgC3 = "canto3.png";
+        String imgC4 = "canto4.png";
 
         //Criando uma fase -->
         /*  PS: Esse é somente um padrão pra organizar melhor o desenvolvimento
@@ -99,6 +110,9 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
         Fase fase_1 = new Fase();
 
+        // tempo de spawn pra fase 1
+        fase_1.setTempoSpawnBase(150);
+
         this.faseAtual = fase_1;
         this.addFase(fase_1);
 
@@ -107,64 +121,38 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         
         // --- Inimigo ---
 
-        Chaser chase = new Chaser("roboPink.png", 12, 12); // Posição inicial do inimigo
+        Chaser chase = new Chaser("vilao1", 12, 12); // Posição inicial do inimigo
 
-        ZigueZague zz = new ZigueZague("bomba.png", 5, 5);
+        Caveira C1 = new Caveira("caveira.png", 2, 1);
+        Caveira C2 = new Caveira("caveira.png", 3, 5);
 
-        BichinhoVaiVemHorizontal bBichinhoH = new BichinhoVaiVemHorizontal("roboPink.png", 3, 3);
-
-        BichinhoVaiVemHorizontal bBichinhoH2 = new BichinhoVaiVemHorizontal("roboPink.png", 6,6);
-
-        BichinhoVaiVemVertical bVv = new BichinhoVaiVemVertical("Caveira.png", 10,10);
-
-        Caveira bV = new Caveira("caveira.png", 9, 1);
-
-
-        Esfera es = new Esfera("esfera.png", 10, 13);
-
-        Chaser chase1 = new Chaser("chaser.png", 20, 8);    // centro do mapa (20, 8)
+        Chaser chase1 = new Chaser("vilao2", 20, 8);    // centro do mapa (20, 8)
         
 
         fase_1.addHero(hero);
         fase_1.addPers(hero);
         fase_1.addPers(chase);
-        fase_1.addPers(zz);
-        fase_1.addPers(bBichinhoH);
-        fase_1.addPers(bBichinhoH2);
-        fase_1.addPers(bVv);
-        fase_1.addPers(bV);
-        fase_1.addPers(es);
+        fase_1.addPers(C1);
+        fase_1.addPers(C2);
         fase_1.addPers(chase1);
 
         // Criando fase 2 pra testar passar de fase ==>
         Fase fase_2 = new Fase();
+        
+        fase_2.setTempoSpawnBase(100);
         this.addFase(fase_2);
 
         // --- Inimigo Fase 2---
 
         Hero hero2 = new Hero("joaninha.png", 0, 7);
 
-        ZigueZague zz2 = new ZigueZague("bomba.png", 5, 5);
-
-        BichinhoVaiVemHorizontal bBichinhoH222 = new BichinhoVaiVemHorizontal("roboPink.png", 3, 3);
-
-        BichinhoVaiVemVertical bVv2 = new BichinhoVaiVemVertical("Caveira.png", 10,10);
-
         Caveira bV2 = new Caveira("caveira.png", 9, 1);
 
-
-        Esfera es2 = new Esfera("esfera.png", 10, 13);
-
-
-        Chaser chase2 = new Chaser("chaser.png", 20, 8);    // centro do mapa (20, 8)
+        Chaser chase2 = new Chaser("vilao3", 20, 8);    // centro do mapa (20, 8)
 
         fase_2.addHero(hero2);
         fase_2.addPers(hero2);
-        fase_2.addPers(zz2);
-        fase_2.addPers(bBichinhoH222);
-        fase_2.addPers(bVv2);
         fase_2.addPers(bV2);
-        fase_2.addPers(es2);
         fase_2.addPers(chase2);
 
         this.addFase(fase_2);
@@ -180,39 +168,96 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         }
 
         // --- Paredes Internas (Estáticas) ---
-        this.addPersonagem(new ParedeH(imgPH, 3, 1));
-        this.addPersonagem(new ParedeH(imgPH, 3, 2));
-        this.addPersonagem(new ParedeV(imgPV, 1, 5));
-        this.addPersonagem(new ParedeV(imgPV, 2, 5));
-        this.addPersonagem(new ParedeV(imgPV, 3, 5));
-        this.addPersonagem(new ParedeV(imgPV, 4, 5));
-        this.addPersonagem(new ParedeV(imgPV, 5, 5));
+        this.addPersonagem(new ParedeV(imgPV, 3, 2));
+        this.addPersonagem(new ParedeH(imgPH, 4, 3));
+        this.addPersonagem(new ParedeV(imgPV, 2, 6));
+        this.addPersonagem(new ParedeV(imgPV, 2, 8));
+        this.addPersonagem(new ParedeV(imgPV, 3, 12));
+        this.addPersonagem(new ParedeH(imgPH, 4, 11));
+        this.addPersonagem(new ParedeV(imgPV, 2, 2));
+        this.addPersonagem(new ParedeV(imgPV, 2, 12));
 
-        this.addPersonagem(new ParedeH(imgPH, 7, 5));
-        this.addPersonagem(new ParedeH(imgPH, 7, 6));
-        this.addPersonagem(new ParedeH(imgPH, 7, 7));
-        this.addPersonagem(new ParedeH(imgPH, 7, 8));
+        //cantos
+        this.addPersonagem(new ParedeV(imgC1, 4, 2));
+        this.addPersonagem(new ParedeV(imgC2, 4, 12));
+        this.addPersonagem(new ParedeV(imgC3, 6, 12));
+        this.addPersonagem(new ParedeV(imgC4, 6, 2));
+        this.addPersonagem(new ParedeV(imgC2, 11, 4));
+        this.addPersonagem(new ParedeV(imgC1, 11, 10));
+        this.addPersonagem(new ParedeV(imgC1, 8, 6));
+        this.addPersonagem(new ParedeV(imgC2, 8, 8));
 
-        this.addPersonagem(new ParedeV(imgPV, 9, 9));
-        this.addPersonagem(new ParedeV(imgPV, 10, 9));
-        this.addPersonagem(new ParedeV(imgPV, 11, 9));
-        this.addPersonagem(new ParedeV(imgPV, 12, 9));
+        this.addPersonagem(new ParedeV(imgPV, 7, 6));
+        this.addPersonagem(new ParedeV(imgPV, 7, 8));
+        this.addPersonagem(new ParedeH(imgPH, 8, 7));
+
+        this.addPersonagem(new ParedeH(imgPH, 6, 3));
+        this.addPersonagem(new ParedeV(imgPV, 7, 2));
+
+        this.addPersonagem(new ParedeH(imgPH, 6, 11));
+        this.addPersonagem(new ParedeV(imgPV, 7, 12));
+
+        this.addPersonagem(new ParedeH(imgPH, 11, 3));
+        this.addPersonagem(new ParedeV(imgPV, 9, 4));
+        this.addPersonagem(new ParedeV(imgPV, 10, 4));
+
+        this.addPersonagem(new ParedeH(imgPH, 11, 11));
+        this.addPersonagem(new ParedeV(imgPV, 9, 10));
+        this.addPersonagem(new ParedeV(imgPV, 10, 10));
+
+        this.addPersonagem(new ParedeH(imgPH, 12, 7));
 
         // --- Paredes Internas (Giratórias) ---
         // Lembrete: A sua ParedeRoda cuida de criar o 'prox' e o 'meio'
         
-        // Portão 1 (Vertical) na posição (4, 8)
-        // new ParedeRoda(Imagem, linha, coluna, éMetade, ant, éVertical, meio)
-        ParedeRoda pr1 = new ParedeRoda(imgPRV, 4, 8, true, null, true, null);
+        // Portão 1 (Horizontal) na posição (2, 4)
+        //new ParedeRoda(Imagem, linha, coluna, éMetade, ant, éVertical, meio)
+        ParedeRoda pr1 = new ParedeRoda(imgPRH, 2, 3, true, null, false, null);
         this.addPersonagem(pr1);
         this.addPersonagem(pr1.prox);
         this.addPersonagem(pr1.meio);
 
-        // Portão 2 (Horizontal) na posição (10, 3)
-        ParedeRoda pr2 = new ParedeRoda(imgPRH, 10, 3, true, null, false, null);
+        // Portão 2 (Horizontal) na posição (2, 10)
+        ParedeRoda pr2 = new ParedeRoda(imgPRH, 2, 9, true, null, false, null);
         this.addPersonagem(pr2);
         this.addPersonagem(pr2.prox);
         this.addPersonagem(pr2.meio);
+        
+        // Portão 3 (Horizontal) na posição (5, 6)
+        ParedeRoda pr3 = new ParedeRoda(imgPRH, 4, 6, true, null, false, null);
+        this.addPersonagem(pr3);
+        this.addPersonagem(pr3.prox);
+        this.addPersonagem(pr3.meio);
+
+        // Portão 4 (Vertical) na posição (5, 6)
+        ParedeRoda pr4 = new ParedeRoda(imgPRV, 8, 2, true, null, true, null);
+        this.addPersonagem(pr4);
+        this.addPersonagem(pr4.prox);
+        this.addPersonagem(pr4.meio);
+
+        // Portão 5 (Vertical) na posição (5, 6)
+        ParedeRoda pr5 = new ParedeRoda(imgPRV, 8, 12, true, null, true, null);
+        this.addPersonagem(pr5);
+        this.addPersonagem(pr5.prox);
+        this.addPersonagem(pr5.meio);
+
+        // Portão 6 (Horizontal) na posição (5, 6)
+        ParedeRoda pr6 = new ParedeRoda(imgPRH, 12, 8, true, null, false, null);
+        this.addPersonagem(pr6);
+        this.addPersonagem(pr6.prox);
+        this.addPersonagem(pr6.meio);
+
+        // Portão 7 (Horizontal) na posição (5, 6)
+        ParedeRoda pr7 = new ParedeRoda(imgPRH, 12, 4, true, null, false, null);
+        this.addPersonagem(pr7);
+        this.addPersonagem(pr7.prox);
+        this.addPersonagem(pr7.meio);
+
+        // Portão 8 (Vertical) na posição (5, 6)
+        ParedeRoda pr8 = new ParedeRoda(imgPRV, 9, 7, true, null, true, null);
+        this.addPersonagem(pr8);
+        this.addPersonagem(pr8.prox);
+        this.addPersonagem(pr8.meio);
 
         // // --- Coletáveis ---
         // this.addPersonagem(new Coletavel(imgC, 1, 2));
@@ -272,7 +317,10 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             
         }
         faseAtual.getColetaveis().removeAll(removed);
-        faseAtual.updatePoints();
+        for(Coletavel c : removed)
+        {
+            faseAtual.updatePoints(c);
+        }
     }
 
     public void removePersonagem(Personagem umPersonagem) {
@@ -284,30 +332,27 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
     }
 
     public void paint(Graphics gOld) {
+
+        
+
+        // CENTRALIZAÇÃO DO MAPA
+        int mapaW = Consts.RES * Consts.CELL_SIDE;
+        int mapaH = Consts.RES* Consts.CELL_SIDE;
+
+        int offsetX = (getWidth() - mapaW) / 2;
+        int offsetY = (getHeight() - mapaH) / 2;
+
         Graphics g = this.getBufferStrategy().getDrawGraphics();
-        /*Criamos um contexto gráfico*/
-        g2 = g.create(getInsets().left, getInsets().top, getWidth() - getInsets().right, getHeight() - getInsets().top);
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        g2 = g.create(offsetX,offsetY,mapaW,mapaH);
+
+        Graphics gJogo = g2.create();
+        
         /**
          * ***********Desenha cenário de fundo*************
          */
-        for (int i = 0; i < Consts.RES; i++) {
-            for (int j = 0; j < Consts.RES; j++) {
-                int mapaLinha = cameraLinha + i;
-                int mapaColuna = cameraColuna + j;
-
-                if (mapaLinha < Consts.MUNDO_ALTURA && mapaColuna < Consts.MUNDO_LARGURA) {
-                    try {
-                        Image newImage = Toolkit.getDefaultToolkit().getImage(
-                                new java.io.File(".").getCanonicalPath() + Consts.PATH + "blackTile.png");
-                        g2.drawImage(newImage,
-                                j * Consts.CELL_SIDE, i * Consts.CELL_SIDE,
-                                Consts.CELL_SIDE, Consts.CELL_SIDE, null);
-                    } catch (IOException ex) {
-                        Logger.getLogger(Tela.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }
         if (!this.faseAtual.getPersonagens().isEmpty()) {
             this.cj.desenhaTudo(faseAtual);
             this.cj.processaTudo(faseAtual,cima, baixo, esquerda, direita);
@@ -318,9 +363,9 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         }
 
         // desnhar a borda cronometro POR CIMA de tudo
-        this.cj.getBorda().desenhar(g2, this);
+        this.cj.getBorda().desenhar(gJogo, this);
         // Desenha a UI (vidas, pontuação, fase)
-        this.gameUI.desenhar(g2, this, this.faseAtual);
+        this.gameUI.desenhar(gJogo,g2, this, this.faseAtual);
         //Verifica passagem de fase
         this.cj.passaFase(this);
 
@@ -375,20 +420,28 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             //     novaFase.getPersonagens().add(es);
 
             //     faseAtual = novaFase;
-            if (e.getKeyCode() == KeyEvent.VK_UP) {
+            if (e.getKeyCode() == KeyEvent.VK_UP) 
+            {
                 this.faseAtual.heroi.moveUp();
                 cima=true;
                 
-            } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            } 
+            else if (e.getKeyCode() == KeyEvent.VK_DOWN) 
+            {
                 this.faseAtual.heroi.moveDown();
                 baixo=true;
-            } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            } 
+            else if (e.getKeyCode() == KeyEvent.VK_LEFT) 
+            {
                 this.faseAtual.heroi.moveLeft();
                 esquerda=true;
-            } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            } 
+            else if (e.getKeyCode() == KeyEvent.VK_RIGHT) 
+            {
                 this.faseAtual.heroi.moveRight();
                 direita=true;
-            } else if (e.getKeyCode() == KeyEvent.VK_S) 
+            } 
+            else if (e.getKeyCode() == KeyEvent.VK_S) 
             {
                 System.out.println("Salvando fase");
                 File ultimafase = new File("UltimaFase.dat");
@@ -411,26 +464,6 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 serializador.close();
                 repaint();
             }
-            else if (e.getKeyCode() == KeyEvent.VK_M)
-            {   
-                File tanque = new File("POO.zip");
-                FileOutputStream canOut = new FileOutputStream(tanque);
-                GZIPOutputStream compact = new GZIPOutputStream(canOut);
-                ObjectOutputStream serialize = new ObjectOutputStream(compact);
-                serialize.writeObject(serialize);
-                serialize.close();
-            }
-            
-            else if (e.getKeyCode() == KeyEvent.VK_N)
-            {
-                File tanque = new File("POO.zip");
-                FileInputStream canOut = new FileInputStream(tanque);
-                GZIPInputStream compact = new GZIPInputStream(canOut);
-                ObjectInputStream serialize = new ObjectInputStream(compact);
-                Personagem p1 = (ZigueZague) serialize.readObject();
-                serialize.close();
-            }
-
             else if (e.getKeyCode() == KeyEvent.VK_W)
             {
                 File pers = new File("pers.zip");
@@ -446,15 +479,19 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
             this.setTitle("-> Cell: " + (this.faseAtual.heroi.getPosicao().getLinha()) + ", " + (this.faseAtual.heroi.getPosicao().getColuna()));
 
             //repaint(); /*invoca o paint imediatamente, sem aguardar o refresh*/
-        } catch (Exception ee) {
-
+        } 
+        catch (Exception ee) 
+        {
+            System.out.println(ee);
         }
     }
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e) 
+    {
         teclasPressionadas.remove(e.getKeyCode());        
     }    
 
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e) 
+    {
         /* Clique do mouse desligado*/
         int x = e.getX();
         int y = e.getY();
@@ -470,7 +507,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents() 
+    {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("POO2023-1 - Skooter");

@@ -4,7 +4,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/carlo/Downloads/TrabalhoPraticoPOO-TileGame-lucas-Miami/TrabalhoPraticoPOO-TileGame-lucas-Miami/Implementação/src/Controler/Tela.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Main.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Auxiliar/Posicao.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Auxiliar/GameUI.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Auxiliar/BordaCronometro.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Auxiliar/ArrastaPersListener.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Modelo/Chaser.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Modelo/Coletavel.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Modelo/ColetavelMult.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Modelo/Fase.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Modelo/Hero.java</file>
+            <file>file:/C:/Projetos/POO/TrabalhoPraticoPOO-TileGame/Implementação/src/Modelo/ParedeH.java</file>
         </group>
     </open-files>
 </project-private>
