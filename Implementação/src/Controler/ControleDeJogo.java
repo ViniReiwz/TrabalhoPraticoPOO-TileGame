@@ -2,7 +2,6 @@ package Controler;
 
 import Modelo.Chaser;
 import Modelo.Coletavel;
-import Modelo.ColetavelEspecial;
 import Modelo.ParedeRoda;
 import Modelo.Personagem;
 import Modelo.Hero;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 public class ControleDeJogo {
     
     private int contadorSpawn;
+    private int tempoEntreSpawns;
     private int maxInimigos;
     private Posicao posicaoSpawnCentral;
     private BordaCronometro borda;
@@ -29,6 +29,7 @@ public class ControleDeJogo {
 
     public ControleDeJogo(){
         this.contadorSpawn = 0;
+        this.tempoEntreSpawns = 150;
         this.maxInimigos = 4;
         this.posicaoSpawnCentral = new Posicao(Consts.MUNDO_ALTURA / 2, Consts.MUNDO_LARGURA / 2);
         this.borda = new BordaCronometro();
@@ -47,15 +48,14 @@ public class ControleDeJogo {
     }
 
     public void desenhaTudo(Fase fase) {
-        fase.spawnAllColl();
         fase.spawnAllPers();
+        fase.spawnAllColl();
     }
     
     public void processaTudo(Fase fase, boolean cima, boolean baixo, boolean esquerda, boolean direita) {
         Hero hero = fase.heroi;
         Personagem pIesimoPersonagem;
         Coletavel cIesimoColetavel;
-        
 
         ArrayList<Coletavel> removed = new ArrayList<>();
         
@@ -100,7 +100,7 @@ public class ControleDeJogo {
                 if (pIesimoPersonagem.isbTransponivel()) { 
                     if (pIesimoPersonagem.isbMortal() && invencibilidadeTimer == 0) {
                         // Perdeu uma vida!
-                        boolean aindaVivo = fase.heroi.perderVida();
+                        boolean aindaVivo = fase.perderVida();
                         
                         // ==== ATIVA EFEITOS VISUAIS ====
                         if (gameUI != null) {
@@ -110,9 +110,9 @@ public class ControleDeJogo {
                         
                         if (aindaVivo) {
                             // Ainda tem vidas, reposiciona o herói e ativa invencibilidade
-                            hero.setPosicao(5, 7);
+                            hero.setPosicao(4, 7);
                             invencibilidadeTimer = TEMPO_INVENCIBILIDADE;
-                            System.out.println("ATENÇÃO! Vida perdida! Vidas restantes: " + fase.heroi.getVida());
+                            System.out.println("ATENÇÃO! Vida perdida! Vidas restantes: " + fase.getVidas());
                         } else {
                             // Game Over
                             System.out.println("╔════════════════════╗");
@@ -130,9 +130,6 @@ public class ControleDeJogo {
                     } 
                 }
             }
-
-            
-
         }
 
         // --- Loop 3: Processar coleta de itens ---
@@ -143,14 +140,6 @@ public class ControleDeJogo {
             if(hero.getPosicao().igual(cIesimoColetavel.getPosicao()))
             {
                 removed.add(cIesimoColetavel);
-                if(cIesimoColetavel instanceof ColetavelEspecial)
-                {
-                    if(fase.multiplier == 3)
-                    {
-                        fase.multiplier = 5;
-                    }
-                    else{fase.multiplier++;}
-                }
                 itensColetados++;
             }
         }
@@ -165,10 +154,7 @@ public class ControleDeJogo {
         }
 
         fase.getColetaveis().removeAll(removed);
-        for(Coletavel c : removed)
-        {
-            fase.updatePoints(c);
-        }
+        fase.updatePoints();
         
         // --- Loop 4: Gerenciamento do spawn dos inimigos ---
         spawnarInimigos(fase);
@@ -182,17 +168,13 @@ public class ControleDeJogo {
             }
         }
 
-        int tempoDaFase = fase.getTempoSpawnBase();
-
         if(numChasers < maxInimigos){
             contadorSpawn++;
-            double progresso = (double) contadorSpawn / tempoDaFase;
+            double progresso = (double) contadorSpawn / tempoEntreSpawns;
             borda.atualizarProgresso(progresso);
 
-            if(contadorSpawn >= tempoDaFase){
-                int tipoVilao = (int)(Math.random() * 5) + 1;
-                String nomeVilao = "vilao" + tipoVilao;
-                Chaser novoInimgo = new Chaser(nomeVilao, posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
+            if(contadorSpawn >= tempoEntreSpawns){
+                Chaser novoInimgo = new Chaser("chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
                 fase.addPers(novoInimgo);
                 contadorSpawn = 0;
                 borda.resetar();
@@ -204,9 +186,6 @@ public class ControleDeJogo {
         }
         else{
             borda.resetar();
-            if(contadorSpawn > 0){
-                contadorSpawn = 0;
-            }
         }
     }
 

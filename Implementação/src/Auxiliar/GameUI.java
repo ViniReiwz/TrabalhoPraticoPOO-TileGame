@@ -1,4 +1,3 @@
-
 package Auxiliar;
 
 import java.awt.Color;
@@ -21,11 +20,11 @@ public class GameUI {
     // Animação de pontuação
     private int pontosExibidos;
     private int pontosAlvo;
-    private static final double VELOCIDADE_ANIMACAO = 0.6;
+    private static final int VELOCIDADE_ANIMACAO = 1;
     
     // Flash vermelho ao ser atingido
     private int flashTimer;
-    private static final int DURACAO_FLASH = 10; // frames
+    private static final int DURACAO_FLASH = 30; // frames
     
     // Barra de progresso
     private int progressoBarraAnimado;
@@ -51,7 +50,7 @@ public class GameUI {
     
     private void carregarIcones() {
         try {
-            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima3.png");
+            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima.png");
             Image img = tempIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
             vidaIcon = new ImageIcon(img);
             
@@ -67,13 +66,13 @@ public class GameUI {
     /**
      * Desenha toda a interface do usuário
      */
-    public void desenhar(Graphics g,Graphics gjogo, Tela tela, Fase fase) {
+    public void desenhar(Graphics g, Tela tela, Fase fase) {
         int larguraTela = Consts.RES * Consts.CELL_SIDE;
         int alturaTela = Consts.RES * Consts.CELL_SIDE;
         
         // ==== FLASH VERMELHO ao ser atingido ====
         if (flashTimer > 0) {
-            desenharFlashVermelho(gjogo, larguraTela, alturaTela);
+            desenharFlashVermelho(g, larguraTela, alturaTela);
             flashTimer--;
         }
         
@@ -104,7 +103,7 @@ public class GameUI {
      */
     private void desenharFlashVermelho(Graphics g, int larguraTela, int alturaTela) {
         // Efeito pulsante: intensidade varia com o tempo
-        int intensidade = (int)(70 * ((double)flashTimer / DURACAO_FLASH));
+        int intensidade = (int)(100 * ((double)flashTimer / DURACAO_FLASH));
         Color flashColor = new Color(255, 0, 0, intensidade);
         
         g.setColor(flashColor);
@@ -125,24 +124,12 @@ public class GameUI {
     }
     
     /**
-     * ==== NOVO! Animação suave dos pontos ====
+     * ==== Atualização instantânea dos pontos ====
      */
     private void atualizarAnimacaoPontos(int pontosReais) {
+        // Atualiza direto sem animação
+        pontosExibidos = pontosReais;
         pontosAlvo = pontosReais;
-        
-        if (pontosExibidos < pontosAlvo) {
-            // Aumenta gradualmente
-            int diferenca = pontosAlvo - pontosExibidos;
-            int incremento = Math.max(1, diferenca / 10); // Acelera conforme a diferença
-            pontosExibidos += incremento;
-            
-            if (pontosExibidos > pontosAlvo) {
-                pontosExibidos = pontosAlvo;
-            }
-        } else if (pontosExibidos > pontosAlvo) {
-            // Diminui gradualmente (caso implementem penalidades)
-            pontosExibidos = pontosAlvo;
-        }
     }
     
     /**
@@ -159,20 +146,13 @@ public class GameUI {
         g.setColor(COR_TEXTO_PRINCIPAL);
         g.drawLine(0, alturaBarra, larguraTela, alturaBarra);
         
-        // PONTUAÇÃO (esquerda) - ANIMADA!
+        // PONTUAÇÃO (esquerda)
         g.setFont(new Font("Courier New", Font.BOLD, 18));
         g.setColor(COR_TEXTO_PRINCIPAL);
         g.drawString("SCORE", 10, 23);
         
-        // Efeito de brilho quando pontos aumentam
-        boolean aumentando = pontosExibidos < pontosAlvo;
-        if (aumentando && (System.currentTimeMillis() / 100) % 2 == 0) {
-            g.setColor(Color.YELLOW);
-        } else {
-            g.setColor(COR_PONTUACAO);
-        }
-        
         g.setFont(new Font("Courier New", Font.BOLD, 20));
+        g.setColor(COR_PONTUACAO);
         g.drawString(String.format("%06d", pontosExibidos), 85, 23);
         
         // HIGH SCORE (centro)
@@ -201,7 +181,7 @@ public class GameUI {
     private void desenharVidas(Graphics g, Fase fase) {
         int x = 10;
         int y = 45;
-        int vidasRestantes = fase.heroi.getVida();
+        int vidasRestantes = fase.getVidas();
         
         // Label "VIDAS"
         g.setFont(new Font("Courier New", Font.BOLD, 14));
