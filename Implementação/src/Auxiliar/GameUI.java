@@ -20,7 +20,7 @@ public class GameUI {
     // Animação de pontuação
     private int pontosExibidos;
     private int pontosAlvo;
-    private static final int VELOCIDADE_ANIMACAO = 0.6;
+    private static final double VELOCIDADE_ANIMACAO = 0.6;
     
     // Flash vermelho ao ser atingido
     private int flashTimer;
