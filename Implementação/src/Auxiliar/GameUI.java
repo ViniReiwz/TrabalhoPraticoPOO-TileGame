@@ -17,14 +17,9 @@ public class GameUI {
     private String feedbackMessage;
     private int feedbackTimer;
     
-    // Animação de pontuação
-    private int pontosExibidos;
-    private int pontosAlvo;
-    private static final int VELOCIDADE_ANIMACAO = 1;
-    
     // Flash vermelho ao ser atingido
     private int flashTimer;
-    private static final int DURACAO_FLASH = 30; // frames
+    private static final int DURACAO_FLASH = 10; // frames
     
     // Barra de progresso
     private int progressoBarraAnimado;
@@ -40,8 +35,6 @@ public class GameUI {
         this.highScore = 0;
         this.feedbackMessage = "";
         this.feedbackTimer = 0;
-        this.pontosExibidos = 0;
-        this.pontosAlvo = 0;
         this.flashTimer = 0;
         this.progressoBarraAnimado = 0;
         
@@ -50,7 +43,7 @@ public class GameUI {
     
     private void carregarIcones() {
         try {
-            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima.png");
+            ImageIcon tempIcon = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + "joaninhaCima3.png");
             Image img = tempIcon.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
             vidaIcon = new ImageIcon(img);
             
@@ -66,18 +59,15 @@ public class GameUI {
     /**
      * Desenha toda a interface do usuário
      */
-    public void desenhar(Graphics g, Tela tela, Fase fase) {
+    public void desenhar(Graphics g, Graphics gjogo, Tela tela, Fase fase) {
         int larguraTela = Consts.RES * Consts.CELL_SIDE;
         int alturaTela = Consts.RES * Consts.CELL_SIDE;
         
         // ==== FLASH VERMELHO ao ser atingido ====
         if (flashTimer > 0) {
-            desenharFlashVermelho(g, larguraTela, alturaTela);
+            desenharFlashVermelho(gjogo, larguraTela, alturaTela);
             flashTimer--;
         }
-        
-        // Atualiza animação de pontos
-        atualizarAnimacaoPontos(fase.getPontos());
         
         // Desenha barra superior com informações
         desenharBarraSuperior(g, larguraTela, fase, tela.fase_num);
@@ -88,7 +78,7 @@ public class GameUI {
         // ==== BARRA DE PROGRESSO DA FASE ====
         desenharBarraProgresso(g, larguraTela, alturaTela, fase);
         
-        // ==== MENSAGENS DE FEEDBACK ====
+        // ==== MENSAGENS DE FEEDBACK (apenas para eventos importantes) ====
         if (feedbackTimer > 0) {
             desenharFeedback(g, larguraTela, alturaTela);
             feedbackTimer--;
@@ -99,11 +89,11 @@ public class GameUI {
     }
     
     /**
-     * ==== NOVO! Flash vermelho ao ser atingido ====
+     * Flash vermelho ao ser atingido
      */
     private void desenharFlashVermelho(Graphics g, int larguraTela, int alturaTela) {
         // Efeito pulsante: intensidade varia com o tempo
-        int intensidade = (int)(100 * ((double)flashTimer / DURACAO_FLASH));
+        int intensidade = (int)(70 * ((double)flashTimer / DURACAO_FLASH));
         Color flashColor = new Color(255, 0, 0, intensidade);
         
         g.setColor(flashColor);
@@ -124,15 +114,6 @@ public class GameUI {
     }
     
     /**
-     * ==== Atualização instantânea dos pontos ====
-     */
-    private void atualizarAnimacaoPontos(int pontosReais) {
-        // Atualiza direto sem animação
-        pontosExibidos = pontosReais;
-        pontosAlvo = pontosReais;
-    }
-    
-    /**
      * Desenha a barra superior com pontuação e fase
      */
     private void desenharBarraSuperior(Graphics g, int larguraTela, Fase fase, int numeroFase) {
@@ -146,14 +127,14 @@ public class GameUI {
         g.setColor(COR_TEXTO_PRINCIPAL);
         g.drawLine(0, alturaBarra, larguraTela, alturaBarra);
         
-        // PONTUAÇÃO (esquerda)
+        // PONTUAÇÃO (esquerda) - ATUALIZAÇÃO INSTANTÂNEA
         g.setFont(new Font("Courier New", Font.BOLD, 18));
         g.setColor(COR_TEXTO_PRINCIPAL);
         g.drawString("SCORE", 10, 23);
         
-        g.setFont(new Font("Courier New", Font.BOLD, 20));
         g.setColor(COR_PONTUACAO);
-        g.drawString(String.format("%06d", pontosExibidos), 85, 23);
+        g.setFont(new Font("Courier New", Font.BOLD, 20));
+        g.drawString(String.format("%06d", fase.getPontos()), 85, 23);
         
         // HIGH SCORE (centro)
         if (fase.getPontos() > highScore) {
@@ -181,7 +162,7 @@ public class GameUI {
     private void desenharVidas(Graphics g, Fase fase) {
         int x = 10;
         int y = 45;
-        int vidasRestantes = fase.getVidas();
+        int vidasRestantes = fase.heroi.getVida();
         
         // Label "VIDAS"
         g.setFont(new Font("Courier New", Font.BOLD, 14));
@@ -222,7 +203,7 @@ public class GameUI {
     }
     
     /**
-     * ==== NOVO! Barra de progresso da fase ====
+     * Barra de progresso da fase
      */
     private void desenharBarraProgresso(Graphics g, int larguraTela, int alturaTela, Fase fase) {
         int totalItens = 1; // Evita divisão por zero
@@ -230,8 +211,8 @@ public class GameUI {
         
         // Calcula progresso (total - restantes = coletados)
         if (fase.getNum_to_collect() >= 0) {
-            totalItens = Math.max(1, fase.getNum_to_collect() + pontosExibidos);
-            itensColetados = pontosExibidos;
+            totalItens = Math.max(1, fase.getNum_to_collect() + fase.getPontos());
+            itensColetados = fase.getPontos();
         }
         
         double progresso = (double)itensColetados / totalItens;
@@ -322,7 +303,7 @@ public class GameUI {
     }
     
     /**
-     * ==== NOVO! Desenha mensagens de feedback temporárias ====
+     * Desenha mensagens de feedback temporárias (apenas para eventos IMPORTANTES)
      */
     private void desenharFeedback(Graphics g, int larguraTela, int alturaTela) {
         // Centraliza a mensagem
@@ -363,7 +344,7 @@ public class GameUI {
     }
     
     /**
-     * Mostra uma mensagem de feedback temporária
+     * Mostra uma mensagem de feedback temporária (apenas para eventos importantes)
      */
     public void mostrarFeedback(String mensagem, int duracao) {
         this.feedbackMessage = mensagem;
@@ -371,12 +352,10 @@ public class GameUI {
     }
     
     /**
-     * Mostra feedback automático baseado em eventos
+     * REMOVIDO: Feedback de coleta comum (não mostra mais mensagens "NICE!", "COOL!", etc.)
      */
     public void mostrarFeedbackColeta() {
-        String[] mensagens = {"NICE!", "GOOD!", "COOL!", "YEAH!", "GREAT!"};
-        int indice = (int)(Math.random() * mensagens.length);
-        mostrarFeedback(mensagens[indice], 30);
+        // Método mantido para compatibilidade, mas não faz nada
     }
     
     public void mostrarFeedbackVidaPerdida() {
@@ -398,7 +377,6 @@ public class GameUI {
      * Reseta animações (útil ao trocar de fase)
      */
     public void resetarAnimacoes() {
-        this.pontosExibidos = 0;
         this.progressoBarraAnimado = 0;
     }
 }

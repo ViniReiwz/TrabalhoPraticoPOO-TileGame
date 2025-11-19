@@ -10,5 +10,13 @@ public class Consts {
     public static final int PERIOD = 150;
     public static final String PATH = File.separator+"imgs"+File.separator;
     public static final int TIMER = 10;
+    public static final String imgPH = "ParedeHorizontal.png"; //
+    public static final String imgPV = "ParedeVertical.png";   //
+    public static final String imgPRV = "ParedeRodaVertical.png"; //
+    public static final String imgPRH = "paredeRodaHorizontal.png"; //
+    public static final String imgC1 = "canto1.png";
+    public static final String imgC2 = "canto2.png";
+    public static final String imgC3 = "canto3.png";
+    public static final String imgC4 = "canto4.png";
     public static final boolean DEBUG = true;
 }

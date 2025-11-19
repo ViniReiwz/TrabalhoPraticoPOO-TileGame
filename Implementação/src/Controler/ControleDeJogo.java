@@ -2,6 +2,11 @@ package Controler;
 
 import Modelo.Chaser;
 import Modelo.Coletavel;
+<<<<<<< HEAD
+=======
+import Modelo.ColetavelEspecial;
+import Modelo.ColetavelMult;
+>>>>>>> d5d4871d3b63583d4154bf7cd68224537cf8a0fc
 import Modelo.ParedeRoda;
 import Modelo.Personagem;
 import Modelo.Hero;
@@ -27,7 +32,8 @@ public class ControleDeJogo {
     // Referência para a UI (para ativar efeitos)
     private GameUI gameUI;
 
-    public ControleDeJogo(){
+    public ControleDeJogo()
+    {
         this.contadorSpawn = 0;
         this.tempoEntreSpawns = 150;
         this.maxInimigos = 4;
@@ -36,23 +42,34 @@ public class ControleDeJogo {
         this.invencibilidadeTimer = 0;
     }
 
-    public BordaCronometro getBorda(){
+    public BordaCronometro getBorda()
+    {
         return borda;
     }
     
     /**
      * Define a referência da UI para ativar efeitos visuais
      */
-    public void setGameUI(GameUI ui) {
+    public void setGameUI(GameUI ui) 
+    {
         this.gameUI = ui;
     }
 
+<<<<<<< HEAD
     public void desenhaTudo(Fase fase) {
         fase.spawnAllPers();
         fase.spawnAllColl();
+=======
+    public void desenhaTudo(Fase fase) 
+    {
+        fase.spawnAllColl();
+        fase.spawnAllPers();
+        fase.spawnAllParedes();
+>>>>>>> d5d4871d3b63583d4154bf7cd68224537cf8a0fc
     }
     
-    public void processaTudo(Fase fase, boolean cima, boolean baixo, boolean esquerda, boolean direita) {
+    public void processaTudo(Fase fase, boolean cima, boolean baixo, boolean esquerda, boolean direita) 
+    {
         Hero hero = fase.heroi;
         Personagem pIesimoPersonagem;
         Coletavel cIesimoColetavel;
@@ -60,60 +77,85 @@ public class ControleDeJogo {
         ArrayList<Coletavel> removed = new ArrayList<>();
         
         // Decrementa o timer de invencibilidade
-        if (invencibilidadeTimer > 0) {
+        if (invencibilidadeTimer > 0) 
+        {
             invencibilidadeTimer--;
         }
         
         // --- Loop 1: Processar IA dos Inimigos ---
-        for (int i = 1; i < fase.getPersonagens().size(); i++) {
+        for (int i = 1; i < fase.getPersonagens().size(); i++) 
+        {
             pIesimoPersonagem = fase.getPersonagens().get(i);
                         
-            if (pIesimoPersonagem instanceof Chaser) {
+            if (pIesimoPersonagem instanceof Chaser) 
+            {
                 ((Chaser) pIesimoPersonagem).computeDirection(hero.getPosicao());
             }
         }
         
         // --- Loop 2: Processar Colisões (Coletáveis e Morte) ---
-        for (int i = fase.getPersonagens().size() - 1; i > 0; i--) { 
-            pIesimoPersonagem = fase.getPersonagens().get(i);
+        for (int i = fase.getParedes().size() - 1; i > 0; i--) 
+        { 
+            pIesimoPersonagem = fase.getParedes().get(i);
             
-            if (pIesimoPersonagem instanceof ParedeRoda) {
-                if (hero.getPosicao().ParedeVe(pIesimoPersonagem.getPosicao())&&direita){
+            if (pIesimoPersonagem instanceof ParedeRoda) 
+            {
+                if (hero.getPosicao().ParedeVe(pIesimoPersonagem.getPosicao())&&direita)
+                {
                     ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
                     hero.moveRight();
                 }
-                else if (hero.getPosicao().ParedeVd(pIesimoPersonagem.getPosicao())&&esquerda){
+                else if (hero.getPosicao().ParedeVd(pIesimoPersonagem.getPosicao())&&esquerda)
+                {
                     ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
                     hero.moveLeft();
                 }
-                else if (hero.getPosicao().ParedeHc(pIesimoPersonagem.getPosicao())&&baixo){
+                else if (hero.getPosicao().ParedeHc(pIesimoPersonagem.getPosicao())&&baixo)
+                {
                     ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
                     hero.moveDown();
                 }
-                else if (hero.getPosicao().ParedeHb(pIesimoPersonagem.getPosicao())&&cima){
+                else if (hero.getPosicao().ParedeHb(pIesimoPersonagem.getPosicao())&&cima)
+                {
                     ((ParedeRoda) pIesimoPersonagem).roda(0,hero.getPosicao());
                     hero.moveUp();
                 }
             }
+        }
+        for(int i = fase.getPersonagens().size() - 1; i > 0; i--)
+        {
             // Colisão com personagens mortais (apenas se não estiver invencível)
-            else if (hero.getPosicao().igual(pIesimoPersonagem.getPosicao())) {
-                if (pIesimoPersonagem.isbTransponivel()) { 
-                    if (pIesimoPersonagem.isbMortal() && invencibilidadeTimer == 0) {
+            pIesimoPersonagem = fase.getPersonagens().get(i);
+            if (hero.getPosicao().igual(pIesimoPersonagem.getPosicao())) 
+            {
+                if (pIesimoPersonagem.isbTransponivel()) 
+                { 
+                    if (pIesimoPersonagem.isbMortal() && invencibilidadeTimer == 0) 
+                    {
                         // Perdeu uma vida!
                         boolean aindaVivo = fase.perderVida();
                         
                         // ==== ATIVA EFEITOS VISUAIS ====
-                        if (gameUI != null) {
+                        if (gameUI != null) 
+                        {
                             gameUI.ativarFlashVermelho();
                             gameUI.mostrarFeedbackVidaPerdida();
                         }
                         
-                        if (aindaVivo) {
+                        if (aindaVivo) 
+                        {
                             // Ainda tem vidas, reposiciona o herói e ativa invencibilidade
                             hero.setPosicao(4, 7);
                             invencibilidadeTimer = TEMPO_INVENCIBILIDADE;
+<<<<<<< HEAD
                             System.out.println("ATENÇÃO! Vida perdida! Vidas restantes: " + fase.getVidas());
                         } else {
+=======
+                            System.out.println("ATENÇÃO! Vida perdida! Vidas restantes: " + fase.heroi.getVida());
+                        } 
+                        else 
+                        {
+>>>>>>> d5d4871d3b63583d4154bf7cd68224537cf8a0fc
                             // Game Over
                             System.out.println("╔════════════════════╗");
                             System.out.println("║    GAME OVER!      ║");
@@ -140,6 +182,17 @@ public class ControleDeJogo {
             if(hero.getPosicao().igual(cIesimoColetavel.getPosicao()))
             {
                 removed.add(cIesimoColetavel);
+<<<<<<< HEAD
+=======
+                if(cIesimoColetavel instanceof ColetavelMult)
+                {
+                    if(fase.multiplier == 3)
+                    {
+                        fase.multiplier = 5;
+                    }
+                    else{fase.multiplier++;}
+                }
+>>>>>>> d5d4871d3b63583d4154bf7cd68224537cf8a0fc
                 itensColetados++;
             }
         }
@@ -173,8 +226,15 @@ public class ControleDeJogo {
             double progresso = (double) contadorSpawn / tempoEntreSpawns;
             borda.atualizarProgresso(progresso);
 
+<<<<<<< HEAD
             if(contadorSpawn >= tempoEntreSpawns){
                 Chaser novoInimgo = new Chaser("chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
+=======
+            if(contadorSpawn >= tempoDaFase){
+                int tipoVilao = (int)(Math.random() * 5) + 1;
+                String nomeVilao = "vilao" + tipoVilao;
+                Chaser novoInimgo = new Chaser(nomeVilao, posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna(), fase.enemy_move_delay);
+>>>>>>> d5d4871d3b63583d4154bf7cd68224537cf8a0fc
                 fase.addPers(novoInimgo);
                 contadorSpawn = 0;
                 borda.resetar();
@@ -184,15 +244,33 @@ public class ControleDeJogo {
                 }
             }
         }
-        else{
+        else
+        {
             borda.resetar();
+<<<<<<< HEAD
+=======
+            if(contadorSpawn > 0)
+            {
+                contadorSpawn = 0;
+            }
+>>>>>>> d5d4871d3b63583d4154bf7cd68224537cf8a0fc
         }
     }
 
-    public boolean ehPosicaoValida(Fase fase, Posicao p) {
+    public boolean ehPosicaoValida(Fase fase, Posicao p) 
+    {
         Personagem pIesimoPersonagem;
         for (int i = 1; i < fase.getPersonagens().size(); i++) {
             pIesimoPersonagem = fase.getPersonagens().get(i);
+            if (!pIesimoPersonagem.isbTransponivel()) {
+                if (pIesimoPersonagem.getPosicao().igual(p)) {
+                    return false;
+                }
+            }
+        }
+
+        for (int i = 1; i < fase.getParedes().size(); i++) {
+            pIesimoPersonagem = fase.getParedes().get(i);
             if (!pIesimoPersonagem.isbTransponivel()) {
                 if (pIesimoPersonagem.getPosicao().igual(p)) {
                     return false;
