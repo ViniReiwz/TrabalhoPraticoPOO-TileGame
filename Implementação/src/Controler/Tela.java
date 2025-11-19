@@ -183,15 +183,8 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
     }
 
-    private void atualizaCamera() {
-        int linha = this.faseAtual.heroi.getPosicao().getLinha();
-        int coluna = this.faseAtual.heroi.getPosicao().getColuna();
-
-        cameraLinha = Math.max(0, Math.min(linha - Consts.RES / 2, Consts.MUNDO_ALTURA - Consts.RES));
-        cameraColuna = Math.max(0, Math.min(coluna - Consts.RES / 2, Consts.MUNDO_LARGURA - Consts.RES));
-    }
-
-    public void go() {
+    public void go() 
+    {
         TimerTask task = new TimerTask() {
             public void run() {
                 repaint();
@@ -208,24 +201,6 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                     return;
 
             teclasPressionadas.add(e.getKeyCode());
-            
-            // if (e.getKeyCode() == KeyEvent.VK_T) {
-            //     this.faseAtual.getPersonagens().clear();
-            //     Fase novaFase = new Fase(new ArrayList<Personagem>());
-
-            //     /*Cria faseAtual adiciona personagens*/
-            //     this.faseAtual.heroi = new this.faseAtual.heroi("Robbo.png", 10, 10);
-            //     this.faseAtual.heroi.setPosicao(10, 10);
-            //     novaFase.getPersonagens().add(this.faseAtual.heroi);
-            //     this.atualizaCamera();
-
-            //     ZigueZague zz = new ZigueZague("bomba.png", 0, 0);
-            //     novaFase.getPersonagens().add(zz);
-
-            //     Esfera es = new Esfera("esfera.png", 4, 4);
-            //     novaFase.getPersonagens().add(es);
-
-            //     faseAtual = novaFase;
             if (e.getKeyCode() == KeyEvent.VK_UP) 
             {
                 this.faseAtual.heroi.moveUp();
@@ -281,7 +256,6 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 oos.close();
             }
 
-            this.atualizaCamera();
             this.setTitle("-> Cell: " + (this.faseAtual.heroi.getPosicao().getLinha()) + ", " + (this.faseAtual.heroi.getPosicao().getColuna()));
 
             //repaint(); /*invoca o paint imediatamente, sem aguardar o refresh*/
@@ -296,20 +270,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         teclasPressionadas.remove(e.getKeyCode());        
     }    
 
-    public void mousePressed(MouseEvent e) 
-    {
-        /* Clique do mouse desligado*/
-        int x = e.getX();
-        int y = e.getY();
-
-        this.setTitle("X: " + x + ", Y: " + y
-                + " -> Cell: " + (y / Consts.CELL_SIDE) + ", " + (x / Consts.CELL_SIDE));
-
-        // Alterações feitas: Normalização da posição para funcionar "longe da área inicial" (Segue as coordenadas da camêra)
-        this.faseAtual.heroi.getPosicao().setPosicao((y / Consts.CELL_SIDE) - 1 + this.cameraLinha, (x / Consts.CELL_SIDE) + this.cameraColuna);
-
-        repaint();
-    }
+    public void mousePressed(MouseEvent e){}
 
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

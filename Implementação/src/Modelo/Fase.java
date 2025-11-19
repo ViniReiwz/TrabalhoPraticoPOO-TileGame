@@ -226,7 +226,7 @@ public class Fase implements Serializable
     public void updatePoints(Coletavel c)
     {
         int before = this.num_to_collect;
-        this.num_to_collect = this.coletaveis.size();
+        this.num_to_collect = this.coletaveis.size() - this.num_skull;
         if(before != this.num_to_collect)
         {
             this.pontos += (c.val * this.multiplier);

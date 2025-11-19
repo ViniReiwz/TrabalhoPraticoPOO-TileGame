@@ -83,7 +83,7 @@ public class ControleDeJogo {
             }
         }
         
-        // --- Loop 2: Processar Colisões (Coletáveis e Morte) ---
+        // --- Loop 2: Processar Colisões (Paredes) ---
         for (int i = fase.getParedes().size() - 1; i > 0; i--) 
         { 
             pIesimoPersonagem = fase.getParedes().get(i);
@@ -174,6 +174,11 @@ public class ControleDeJogo {
                         fase.multiplier = 5;
                     }
                     else{fase.multiplier++;}
+                }
+                if(cIesimoColetavel.isbMortal())
+                {
+                    hero.perderVida();
+                    gameUI.ativarFlashVermelho();
                 }
                 itensColetados++;
             }
