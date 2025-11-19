@@ -1,13 +1,13 @@
 package Modelo;
 
 import Auxiliar.Desenho;
-import Controler.ControleDeJogo;
+import Auxiliar.Consts;
+import Auxiliar.Posicao;
 import java.awt.Graphics;
-import java.io.IOException;
 import java.awt.image.BufferedImage;
 import java.awt.Image;
+import java.io.IOException; 
 import javax.swing.ImageIcon;
-import Auxiliar.Consts;
 
 public class Hero extends Personagem {
     
@@ -18,85 +18,46 @@ public class Hero extends Personagem {
     
     private int frameAtual = 0;
     private int contadorAnimacao = 0;
-    private double velocidadeAnimacao = 0.25;
+    private int velocidadeAnimacao = 1;
     private int totalFrames = 3;
+    private int vida = 3;
     
     private boolean animacaoIndo = true;
-    private String direcaoAtual = "cima";
     
-    // Sistema de vidas
-    private int vidas = 3;
-    private final int VIDAS_MAXIMAS = 3;
+    private String spriteDirecao = "cima"; 
     
-    // Referência para verificar invencibilidade
-    private ControleDeJogo controleJogo;
+    // -1=Parado, 0=Cima, 1=Baixo, 2=Esquerda, 3=Direita
+    private int direcaoMovimento = -1; 
     
+    private int contadorMovimento = 0;
+    private final int VELOCIDADE_MOVIMENTO = 2; //quanto maior mais lento
+    
+    private Posicao pPosicaoInicial; 
+
     public Hero(String sNomeImagePNG, int linha, int coluna){
         super(sNomeImagePNG, linha, coluna);
+        this.pPosicaoInicial = new Posicao(linha, coluna);
         
-        // Inicializa os arrays de frames
         framesAnimacaoCima = new ImageIcon[totalFrames];
         framesAnimacaoBaixo = new ImageIcon[totalFrames];
         framesAnimacaoEsquerda = new ImageIcon[totalFrames];
         framesAnimacaoDireita = new ImageIcon[totalFrames];
         
-        // Carrega todos os frames de cada direção
         carregarFramesAnimacao();
-        
-        // Define a imagem inicial
         this.iImage = framesAnimacaoCima[0];
     }
     
-    public void setControleJogo(ControleDeJogo controle) {
-        this.controleJogo = controle;
-    }
-
-    public int getVida() {
-        return vidas;
-    }
-
-    public void setVida(int vidas) {
-        this.vidas = Math.max(0, Math.min(vidas, VIDAS_MAXIMAS));
-    }
-
-    public boolean perderVida() {
-        if (vidas > 0) {
-            vidas--;
-        }
-        return vidas > 0;
-    }
-
-    public void ganharVida() {
-        if (vidas < VIDAS_MAXIMAS) {
-            vidas++;
-        }
-    }
-    
-    public boolean estaMorto() {
-        return vidas <= 0;
-    }
-
-    public void resetarVidas() {
-        vidas = VIDAS_MAXIMAS;
-    }
-    
+   
     private void carregarFramesAnimacao(){
-        // Carrega frames para CIMA
         framesAnimacaoCima[0] = carregarImagem("joaninhaCima1.png");
         framesAnimacaoCima[1] = carregarImagem("joaninhaCima2.png");
         framesAnimacaoCima[2] = carregarImagem("joaninhaCima3.png");
-        
-        // Carrega frames para BAIXO
         framesAnimacaoBaixo[0] = carregarImagem("joaninhaBaixo1.png");
         framesAnimacaoBaixo[1] = carregarImagem("joaninhaBaixo2.png");
         framesAnimacaoBaixo[2] = carregarImagem("joaninhaBaixo3.png");
-        
-        // Carrega frames para ESQUERDA
         framesAnimacaoEsquerda[0] = carregarImagem("joaninhaEsquerda1.png");
         framesAnimacaoEsquerda[1] = carregarImagem("joaninhaEsquerda2.png");
         framesAnimacaoEsquerda[2] = carregarImagem("joaninhaEsquerda3.png");
-        
-        // Carrega frames para DIREITA
         framesAnimacaoDireita[0] = carregarImagem("joaninhaDireita1.png");
         framesAnimacaoDireita[1] = carregarImagem("joaninhaDireita2.png");
         framesAnimacaoDireita[2] = carregarImagem("joaninhaDireita3.png");
@@ -109,129 +70,142 @@ public class Hero extends Personagem {
             BufferedImage bi = new BufferedImage(Consts.CELL_SIDE, Consts.CELL_SIDE, BufferedImage.TYPE_INT_ARGB);
             Graphics g = bi.createGraphics();
             g.drawImage(img, 0, 0, Consts.CELL_SIDE, Consts.CELL_SIDE, null);
-            g.dispose();
             return new ImageIcon(bi);
         } catch (IOException ex){
             System.out.println("Erro ao carregar imagem: " + sNomeImagePNG + " - " + ex.getMessage());
             return null;
         }
     }
-    
+
     private void atualizarAnimacao(){
         contadorAnimacao++;
-        
         if(contadorAnimacao >= velocidadeAnimacao){
             contadorAnimacao = 0;
-
             if(animacaoIndo){
                 frameAtual++;
-                if(frameAtual >= totalFrames - 1){
-                    animacaoIndo = false;
-                }
+                if(frameAtual >= totalFrames - 1) animacaoIndo = false;
             } else{
                 frameAtual--;
-                if(frameAtual <= 0){
-                    animacaoIndo = true;
-                }
+                if(frameAtual <= 0) animacaoIndo = true;
             }
-
             atualizarImagemPorDirecao();
         }
     }
     
     private void atualizarImagemPorDirecao(){
-        switch(direcaoAtual){
-            case "cima":
-                this.iImage = framesAnimacaoCima[frameAtual];
-                break;
-            case "baixo":
-                this.iImage = framesAnimacaoBaixo[frameAtual];
-                break;
-            case "esquerda":
-                this.iImage = framesAnimacaoEsquerda[frameAtual];
-                break;
-            case "direita":
-                this.iImage = framesAnimacaoDireita[frameAtual];
-                break;
+        switch(spriteDirecao){
+            case "cima": this.iImage = framesAnimacaoCima[frameAtual]; break;
+            case "baixo": this.iImage = framesAnimacaoBaixo[frameAtual]; break;
+            case "esquerda": this.iImage = framesAnimacaoEsquerda[frameAtual]; break;
+            case "direita": this.iImage = framesAnimacaoDireita[frameAtual]; break;
         }
     }
 
+    // ============================================================
+    // === MÉTODO CORRIGIDO PARA INTERAGIR COM A PAREDE RODA ===
+    // ============================================================
     @Override
     public void autoDesenho(){
         atualizarAnimacao();
         
-        // Verifica se está invencível
-        boolean invencivel = (controleJogo != null && controleJogo.estaInvencivel());
-        
-        if (invencivel) {
-            // Efeito de piscar durante invencibilidade
-            int ciclo = (int)(System.currentTimeMillis() / 100) % 2;
-            if (ciclo == 0) {
-                // Desenha normalmente (frame visível)
-                super.autoDesenho();
+        contadorMovimento++;
+        // Verifica se chegou a hora de se mover
+        if(contadorMovimento >= VELOCIDADE_MOVIMENTO && direcaoMovimento != -1) {
+            contadorMovimento = 0;
+            
+            Posicao proximaPosicao = new Posicao(this.pPosicao.getLinha(), this.pPosicao.getColuna());
+            
+            switch(direcaoMovimento) {
+                case 0: proximaPosicao.moveUp(); break;    
+                case 1: proximaPosicao.moveDown(); break;  
+                case 2: proximaPosicao.moveLeft(); break;  
+                case 3: proximaPosicao.moveRight(); break; 
             }
-            // Se ciclo == 1, não desenha nada (frame invisível = piscar)
-        } else {
-            // Desenha normalmente quando não está invencível
-            super.autoDesenho();
-        }
-    }
-    
-    public void voltaAUltimaPosicao(){
-        this.pPosicao.volta();
-    }
-    
-    public boolean setPosicao(int linha, int coluna){
-        if(this.pPosicao.setPosicao(linha, coluna)){
-            if(!Desenho.acessoATelaDoJogo().ehPosicaoValida(this.getPosicao())){
-                this.voltaAUltimaPosicao();
+            
+            // 1. Tenta se mover normalmente
+            if(Desenho.acessoATelaDoJogo().ehPosicaoValida(proximaPosicao)) {
+                this.pPosicao.setPosicao(proximaPosicao.getLinha(), proximaPosicao.getColuna());
+            } else {
+                // 2. Bateu em algo! Verifique se é uma ParedeRoda
+                boolean interagiuComParede = false;
+                
+                Fase fase = Desenho.acessoATelaDoJogo().faseAtual;
+                
+                for(Personagem p : fase.getPersonagens()){
+                    if(p instanceof ParedeRoda && p.getPosicao().igual(proximaPosicao)){
+                        
+                        // A. Gira a parede
+                        ((ParedeRoda) p).roda(0, this.pPosicao);
+                        
+                        // B. CORREÇÃO: Tenta mover IMEDIATAMENTE após girar
+                        // Verifica se agora (após girar) a posição ficou livre
+                        if(Desenho.acessoATelaDoJogo().ehPosicaoValida(proximaPosicao)){
+                             this.pPosicao.setPosicao(proximaPosicao.getLinha(), proximaPosicao.getColuna());
+                        }
+                        
+                        interagiuComParede = true;
+                        break; 
+                    }
+                }
+                
+                // Só para se NÃO interagiu com nada (ex: bateu em parede fixa)
+                if(!interagiuComParede){
+                    direcaoMovimento = -1; 
+                }
             }
-            return true;
         }
-        return false;
+
+        super.autoDesenho();
     }
     
-    private boolean validaPosicao(){
-        if(!Desenho.acessoATelaDoJogo().ehPosicaoValida(this.getPosicao())){
-            this.voltaAUltimaPosicao();
-            return false;
-        }
+    // --- MÉTODOS DE CONTROLE ---
+    public boolean moveUp(){
+        this.direcaoMovimento = 0;   
+        this.spriteDirecao = "cima"; 
+        atualizarImagemPorDirecao();
         return true;
     }
-    
-    public boolean moveUp(){
-        if(super.moveUp()){
-            direcaoAtual = "cima";
-            atualizarImagemPorDirecao();
-            return validaPosicao();
-        }
-        return false;
-    }
-    
     public boolean moveDown(){
-        if(super.moveDown()){
-            direcaoAtual = "baixo";
-            atualizarImagemPorDirecao();
-            return validaPosicao();
-        }
-        return false;
+        this.direcaoMovimento = 1;
+        this.spriteDirecao = "baixo";
+        atualizarImagemPorDirecao();
+        return true;
     }
-    
     public boolean moveRight(){
-        if(super.moveRight()){
-            direcaoAtual = "direita";
-            atualizarImagemPorDirecao();
-            return validaPosicao();
+        this.direcaoMovimento = 3;
+        this.spriteDirecao = "direita";
+        atualizarImagemPorDirecao();
+        return true;
+    }
+    public boolean moveLeft(){
+        this.direcaoMovimento = 2;
+        this.spriteDirecao = "esquerda";
+        atualizarImagemPorDirecao();
+        return true;
+    }    
+    public void parar() {
+        this.direcaoMovimento = -1;
+    }
+
+    // --- MÉTODOS DE VIDA ---
+    public int getVida() { return this.vida; }
+    public boolean perderVida() {
+        if (this.vida > 0) {
+            this.vida--;
+            System.out.println("Vida perdida! Vidas restantes: " + this.vida);
+            return this.vida > 0;
         }
         return false;
     }
+    public void ganharVida() { if (this.vida < 3) this.vida++; }
+    public void resetarVida() { this.vida = 3; }
+    public boolean estaVivo() { return this.vida > 0; }
     
-    public boolean moveLeft(){
-        if(super.moveLeft()){
-            direcaoAtual = "esquerda";
-            atualizarImagemPorDirecao();
-            return validaPosicao();
-        }
-        return false;
+    public void resetarPosicao() {
+        this.pPosicao.setPosicao(this.pPosicaoInicial.getLinha(), this.pPosicaoInicial.getColuna());
+        this.direcaoMovimento = -1; 
+        this.spriteDirecao = "cima"; 
+        this.iImage = framesAnimacaoCima[0];
+        atualizarImagemPorDirecao();
     }
 }

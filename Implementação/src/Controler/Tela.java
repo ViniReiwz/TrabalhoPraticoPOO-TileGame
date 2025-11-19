@@ -27,16 +27,11 @@ import Auxiliar.Consts;
 import Auxiliar.Desenho;
 import Auxiliar.Posicao;
 
-import Modelo.Coletavel;
 import Modelo.Personagem;
-import Modelo.ParedeRoda;
 import Modelo.Caveira;
 import Modelo.Hero;
 import Modelo.Chaser;
-import Modelo.ParedeH;
-import Modelo.ParedeV;
 import Modelo.Fase;
-import Modelo.ParedeRodaMeio;
 
 public class Tela extends javax.swing.JFrame implements MouseListener, KeyListener {
 
@@ -80,24 +75,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
                 Consts.RES * Consts.CELL_SIDE + getInsets().top + getInsets().bottom);
 
         this.setLocationRelativeTo(null);
-        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         setResizable(true);
-        
-
-        // JPanel wrapper = new JPanel(new GridBagLayout());
-        // wrapper.setBackground(Color.BLACK);
-        // wrapper.add(this);
-        // setContentPane(wrapper);
-
-        // --- Definição das Imagens ---
-        String imgPH = "ParedeHorizontal.png"; //
-        String imgPV = "ParedeVertical.png";   //
-        String imgPRV = "ParedeRodaVertical.png"; //
-        String imgPRH = "paredeRodaHorizontal.png"; //
-        String imgC1 = "canto1.png";
-        String imgC2 = "canto2.png";
-        String imgC3 = "canto3.png";
-        String imgC4 = "canto4.png";
 
         //Criando uma fase -->
         /*  PS: Esse é somente um padrão pra organizar melhor o desenvolvimento
@@ -108,7 +86,7 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
          *      sua criação será feita posteriormente na classe Fase, aqui em tela criamos somente os objetos dos personagens
          */
 
-        Fase fase_1 = new Fase();
+        Fase fase_1 = new Fase(4,3,5);
 
         // tempo de spawn pra fase 1
         fase_1.setTempoSpawnBase(150);
@@ -118,157 +96,23 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
         // Heroi
         Hero hero = new Hero("joaninha.png", 0, 7);
-        
-        // --- Inimigo ---
-
-        Chaser chase = new Chaser("vilao1", 12, 12); // Posição inicial do inimigo
-
-        Caveira C1 = new Caveira("caveira.png", 2, 1);
-        Caveira C2 = new Caveira("caveira.png", 3, 5);
-
-        Chaser chase1 = new Chaser("vilao2", 20, 8);    // centro do mapa (20, 8)
-        
-
+                
         fase_1.addHero(hero);
         fase_1.addPers(hero);
-        fase_1.addPers(chase);
-        fase_1.addPers(C1);
-        fase_1.addPers(C2);
-        fase_1.addPers(chase1);
 
         // Criando fase 2 pra testar passar de fase ==>
-        Fase fase_2 = new Fase();
+        
+        Fase fase_2 = new Fase(4, 4,4);
         
         fase_2.setTempoSpawnBase(100);
         this.addFase(fase_2);
 
-        // --- Inimigo Fase 2---
-
         Hero hero2 = new Hero("joaninha.png", 0, 7);
-
-        Caveira bV2 = new Caveira("caveira.png", 9, 1);
-
-        Chaser chase2 = new Chaser("vilao3", 20, 8);    // centro do mapa (20, 8)
 
         fase_2.addHero(hero2);
         fase_2.addPers(hero2);
-        fase_2.addPers(bV2);
-        fase_2.addPers(chase2);
 
         this.addFase(fase_2);
-
-        // --- Bordas do Labirinto (14x14) ---
-        for (int j = 1; j < Consts.MUNDO_LARGURA-1; j++) {
-            this.addPersonagem(new ParedeH(imgPH, 0, j)); // Borda superior
-            this.addPersonagem(new ParedeH(imgPH, Consts.MUNDO_ALTURA-1, j)); // Borda inferior
-        }
-        for (int i = 1; i < Consts.MUNDO_ALTURA-1; i++) {
-            this.addPersonagem(new ParedeV(imgPV, i, 0)); // Borda esquerda
-            this.addPersonagem(new ParedeV(imgPV, i, Consts.MUNDO_LARGURA-1)); // Borda direita
-        }
-
-        // --- Paredes Internas (Estáticas) ---
-        this.addPersonagem(new ParedeV(imgPV, 3, 2));
-        this.addPersonagem(new ParedeH(imgPH, 4, 3));
-        this.addPersonagem(new ParedeV(imgPV, 2, 6));
-        this.addPersonagem(new ParedeV(imgPV, 2, 8));
-        this.addPersonagem(new ParedeV(imgPV, 3, 12));
-        this.addPersonagem(new ParedeH(imgPH, 4, 11));
-        this.addPersonagem(new ParedeV(imgPV, 2, 2));
-        this.addPersonagem(new ParedeV(imgPV, 2, 12));
-
-        //cantos
-        this.addPersonagem(new ParedeV(imgC1, 4, 2));
-        this.addPersonagem(new ParedeV(imgC2, 4, 12));
-        this.addPersonagem(new ParedeV(imgC3, 6, 12));
-        this.addPersonagem(new ParedeV(imgC4, 6, 2));
-        this.addPersonagem(new ParedeV(imgC2, 11, 4));
-        this.addPersonagem(new ParedeV(imgC1, 11, 10));
-        this.addPersonagem(new ParedeV(imgC1, 8, 6));
-        this.addPersonagem(new ParedeV(imgC2, 8, 8));
-
-        this.addPersonagem(new ParedeV(imgPV, 7, 6));
-        this.addPersonagem(new ParedeV(imgPV, 7, 8));
-        this.addPersonagem(new ParedeH(imgPH, 8, 7));
-
-        this.addPersonagem(new ParedeH(imgPH, 6, 3));
-        this.addPersonagem(new ParedeV(imgPV, 7, 2));
-
-        this.addPersonagem(new ParedeH(imgPH, 6, 11));
-        this.addPersonagem(new ParedeV(imgPV, 7, 12));
-
-        this.addPersonagem(new ParedeH(imgPH, 11, 3));
-        this.addPersonagem(new ParedeV(imgPV, 9, 4));
-        this.addPersonagem(new ParedeV(imgPV, 10, 4));
-
-        this.addPersonagem(new ParedeH(imgPH, 11, 11));
-        this.addPersonagem(new ParedeV(imgPV, 9, 10));
-        this.addPersonagem(new ParedeV(imgPV, 10, 10));
-
-        this.addPersonagem(new ParedeH(imgPH, 12, 7));
-
-        // --- Paredes Internas (Giratórias) ---
-        // Lembrete: A sua ParedeRoda cuida de criar o 'prox' e o 'meio'
-        
-        // Portão 1 (Horizontal) na posição (2, 4)
-        //new ParedeRoda(Imagem, linha, coluna, éMetade, ant, éVertical, meio)
-        ParedeRoda pr1 = new ParedeRoda(imgPRH, 2, 3, true, null, false, null);
-        this.addPersonagem(pr1);
-        this.addPersonagem(pr1.prox);
-        this.addPersonagem(pr1.meio);
-
-        // Portão 2 (Horizontal) na posição (2, 10)
-        ParedeRoda pr2 = new ParedeRoda(imgPRH, 2, 9, true, null, false, null);
-        this.addPersonagem(pr2);
-        this.addPersonagem(pr2.prox);
-        this.addPersonagem(pr2.meio);
-        
-        // Portão 3 (Horizontal) na posição (5, 6)
-        ParedeRoda pr3 = new ParedeRoda(imgPRH, 4, 6, true, null, false, null);
-        this.addPersonagem(pr3);
-        this.addPersonagem(pr3.prox);
-        this.addPersonagem(pr3.meio);
-
-        // Portão 4 (Vertical) na posição (5, 6)
-        ParedeRoda pr4 = new ParedeRoda(imgPRV, 8, 2, true, null, true, null);
-        this.addPersonagem(pr4);
-        this.addPersonagem(pr4.prox);
-        this.addPersonagem(pr4.meio);
-
-        // Portão 5 (Vertical) na posição (5, 6)
-        ParedeRoda pr5 = new ParedeRoda(imgPRV, 8, 12, true, null, true, null);
-        this.addPersonagem(pr5);
-        this.addPersonagem(pr5.prox);
-        this.addPersonagem(pr5.meio);
-
-        // Portão 6 (Horizontal) na posição (5, 6)
-        ParedeRoda pr6 = new ParedeRoda(imgPRH, 12, 8, true, null, false, null);
-        this.addPersonagem(pr6);
-        this.addPersonagem(pr6.prox);
-        this.addPersonagem(pr6.meio);
-
-        // Portão 7 (Horizontal) na posição (5, 6)
-        ParedeRoda pr7 = new ParedeRoda(imgPRH, 12, 4, true, null, false, null);
-        this.addPersonagem(pr7);
-        this.addPersonagem(pr7.prox);
-        this.addPersonagem(pr7.meio);
-
-        // Portão 8 (Vertical) na posição (5, 6)
-        ParedeRoda pr8 = new ParedeRoda(imgPRV, 9, 7, true, null, true, null);
-        this.addPersonagem(pr8);
-        this.addPersonagem(pr8.prox);
-        this.addPersonagem(pr8.meio);
-
-        // // --- Coletáveis ---
-        // this.addPersonagem(new Coletavel(imgC, 1, 2));
-        // this.addPersonagem(new Coletavel(imgC, 1, 12));
-        // this.addPersonagem(new Coletavel(imgC, 5, 2));
-        // this.addPersonagem(new Coletavel(imgC, 5, 10));
-        // this.addPersonagem(new Coletavel(imgC, 8, 8));
-        // this.addPersonagem(new Coletavel(imgC, 10, 1));
-        // this.addPersonagem(new Coletavel(imgC, 12, 5));
-        // this.addPersonagem(new Coletavel(imgC, 12, 11));
-
     }
 
     public void addFase(Fase fase)
@@ -280,51 +124,13 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         return fases;
     }
 
-    public int getCameraLinha() {
-        return cameraLinha;
-    }
-
-    public int getCameraColuna() {
-        return cameraColuna;
+    public Fase getFaseAtual()
+    {
+        return this.faseAtual;
     }
 
     public boolean ehPosicaoValida(Posicao p) {
         return cj.ehPosicaoValida(this.faseAtual, p);
-    }
-
-    public void addPersonagem(Personagem umPersonagem) {
-        faseAtual.getPersonagens().add(umPersonagem);
-        ArrayList<Coletavel> removed = new ArrayList<>();
- 
-            
-        for(int j = faseAtual.getColetaveis().size() - 1; j >= 0; j--)
-        {
-            Coletavel cIesimoColetavel = faseAtual.getColetaveis().get(j);
-            if(umPersonagem.getPosicao().igual(cIesimoColetavel.getPosicao()))
-            {
-                removed.add(cIesimoColetavel);
-            }
-            
-            if(umPersonagem instanceof ParedeRodaMeio){
-                if(umPersonagem.getPosicao().ParedeVd(cIesimoColetavel.getPosicao())||
-                   umPersonagem.getPosicao().ParedeVe(cIesimoColetavel.getPosicao())||
-                   umPersonagem.getPosicao().ParedeHc(cIesimoColetavel.getPosicao())||
-                   umPersonagem.getPosicao().ParedeHb(cIesimoColetavel.getPosicao()))
-                {
-                    removed.add(cIesimoColetavel);
-                }
-            }
-            
-        }
-        faseAtual.getColetaveis().removeAll(removed);
-        for(Coletavel c : removed)
-        {
-            faseAtual.updatePoints(c);
-        }
-    }
-
-    public void removePersonagem(Personagem umPersonagem) {
-        faseAtual.getPersonagens().remove(umPersonagem);
     }
 
     public Graphics getGraphicsBuffer() {
