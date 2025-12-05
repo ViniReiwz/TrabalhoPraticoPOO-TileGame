@@ -231,7 +231,7 @@ public class ControleDeJogo {
                 Chaser novoInimgo = new Chaser("chaser.png", posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna());
 =======
             if(contadorSpawn >= tempoDaFase){
-                int tipoVilao = (int)(Math.random() * 5) + 1;
+                int tipoVilao = (int)(Math.random() * 8) + 1;
                 String nomeVilao = "vilao" + tipoVilao;
                 Chaser novoInimgo = new Chaser(nomeVilao, posicaoSpawnCentral.getLinha(), posicaoSpawnCentral.getColuna(), fase.enemy_move_delay);
 >>>>>>> d5d4871d3b63583d4154bf7cd68224537cf8a0fc
